@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Expense Manager",
-  description: "Personal expense tracking app",
+  title: "Paisa Track",
+  description: "Smart expense tracking for everyone",
 };
 
 export default function RootLayout({
