@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Paisa Track",
+  title: "Kharcha Saathi",
   description: "Smart expense tracking for everyone",
 };
 
