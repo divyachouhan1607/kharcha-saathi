@@ -13,8 +13,28 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://expense-manager-nextjs-zeta.vercel.app"),
   title: "Kharcha Saathi",
   description: "Smart expense tracking for everyone",
+  openGraph: {
+    title: "Kharcha Saathi",
+    description: "Smart expense tracking for everyone",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1080,
+        height: 1080,
+        alt: "Kharcha Saathi - Stress Free Tracking",
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Kharcha Saathi",
+    description: "Smart expense tracking for everyone",
+    images: ["/og-image.png"],
+  },
 };
 
 export default function RootLayout({
