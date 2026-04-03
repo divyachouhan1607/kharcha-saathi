@@ -1069,6 +1069,9 @@
         body.dark .budget-text { color: #887755; }
         body.dark .budget-amount { color: #F5E8D8; }
         body.dark .budget-progress { background: #2A1A10; }
+        body.dark #totalBudgetAmount { background: #161620; border-color: #2A1A10; color: #F5E8D8; }
+        body.dark #totalBudgetAmount::placeholder { color: #665544; }
+        body.dark #totalBudgetDisplay { color: #887755; }
 
         body.dark .category-item { background: #161620; }
         body.dark .category-item-name { color: #F5E8D8; }
@@ -1361,7 +1364,22 @@
                 <div class="amount" id="budgetStatus">Set Your Budgets</div>
             </div>
 
-            <form onsubmit="setBudget(event)">
+            <!-- Total Monthly Budget -->
+            <div style="margin-bottom: 18px;">
+                <label style="display:block; margin-bottom:5px; color:#495057; font-weight:600; font-size:14px;">Total Monthly Budget</label>
+                <div style="display:flex; gap:8px;">
+                    <input type="number" id="totalBudgetAmount" step="0.01" placeholder="0.00" style="flex:1; padding:12px; border:2px solid #dee2e6; border-radius:8px; font-size:16px;">
+                    <button class="btn btn-primary" onclick="setTotalBudget()" style="width:auto; padding:12px 20px;">Set</button>
+                </div>
+                <div id="totalBudgetDisplay" style="font-size:12px; color:#888; margin-top:5px;"></div>
+            </div>
+
+            <div style="position:relative; text-align:center; margin:20px 0 15px;">
+                <hr style="border:none; border-top:1px solid #dee2e6;">
+                <span style="position:absolute; top:-10px; left:50%; transform:translateX(-50%); background:#FFFBF8; padding:0 10px; font-size:12px; color:#888; font-weight:600;">OR SET PER CATEGORY</span>
+            </div>
+
+            <form id="budgetForm" onsubmit="setBudget(event)">
                 <div class="form-group">
                     <label>Category</label>
                     <select id="budgetCategory" required>
@@ -1370,11 +1388,11 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Monthly Budget</label>
+                    <label>Category Budget</label>
                     <input type="number" id="budgetAmount" step="0.01" required placeholder="0.00">
                 </div>
 
-                <button type="submit" class="btn btn-primary">Set Budget</button>
+                <button type="submit" class="btn btn-primary">Set Category Budget</button>
             </form>
 
             <div id="budgetList"></div>
@@ -1775,7 +1793,8 @@
             const days = isCur ? today.getDate() : new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate();
             const dailyAvg = days > 0 ? total / days : 0;
 
-            const totalBudget = Object.values(mb).reduce((s, b) => s + b, 0);
+            // Use total monthly budget if set, otherwise sum category budgets
+            const totalBudget = mb['__total__'] || Object.entries(mb).filter(([k]) => k !== '__total__').reduce((s, [, b]) => s + b, 0);
 
             // ===== SAFE TO SPEND CARD =====
             const stsCard = document.getElementById('safeToSpendCard');
@@ -2375,6 +2394,17 @@
             }, { passive: true });
         }
 
+        function setTotalBudget() {
+            const amt = parseFloat(document.getElementById('totalBudgetAmount').value);
+            if (!amt || amt <= 0) { showToast('Enter a valid amount', 'error'); return; }
+            const mk = getMonthKey();
+            if (!budgets[mk]) budgets[mk] = {};
+            budgets[mk]['__total__'] = amt;
+            document.getElementById('totalBudgetAmount').value = '';
+            saveData(); renderBudgets(); renderMiniDashboard();
+            showToast(`Total monthly budget set to ${formatCurrency(amt)}`, 'success');
+        }
+
         function setBudget(event) {
             event.preventDefault();
             const cat = document.getElementById('budgetCategory').value;
@@ -2389,22 +2419,56 @@
             const mk = getMonthKey(), mb = budgets[mk] || {}, me = expenses[mk] || [];
             const list = document.getElementById('budgetList');
             const spend = {}; me.forEach(e => { spend[e.category] = (spend[e.category] || 0) + e.amount; });
-            const bc = Object.keys(mb);
-            if (bc.length === 0) {
+            const totalBudget = mb['__total__'] || 0;
+            const bc = Object.keys(mb).filter(k => k !== '__total__');
+
+            // Show current total budget
+            const totalDisplay = document.getElementById('totalBudgetDisplay');
+            if (totalBudget > 0) {
+                const totalSpent = me.reduce((s, e) => s + e.amount, 0);
+                const rem = totalBudget - totalSpent;
+                const cls = rem <= 0 ? 'color:#dc3545' : (rem / totalBudget < 0.2 ? 'color:#e67e22' : 'color:#28a745');
+                totalDisplay.innerHTML = `Current: <strong>${formatCurrency(totalBudget)}</strong> — <span style="${cls}">${rem >= 0 ? formatCurrency(rem) + ' left' : formatCurrency(Math.abs(rem)) + ' over'}</span>`;
+            } else {
+                totalDisplay.textContent = '';
+            }
+
+            if (bc.length === 0 && totalBudget === 0) {
                 list.innerHTML = `<div class="empty-state">
                     <div class="empty-emoji">💰</div>
                     <div class="empty-title">No budgets set for this month</div>
-                    <div class="empty-subtitle">Set spending limits per category to stay on track</div>
-                    <button class="empty-action" onclick="document.getElementById('budgetCategory').focus()">+ Set Budget</button>
+                    <div class="empty-subtitle">Set a total monthly budget above, or add per-category limits below</div>
+                    <button class="empty-action" onclick="document.getElementById('totalBudgetAmount').focus(); document.getElementById('totalBudgetAmount').scrollIntoView({behavior:'smooth', block:'center'})">+ Set Budget</button>
                 </div>`;
                 document.getElementById('budgetStatus').textContent = 'Set Your Budgets'; return;
             }
-            let tb = 0, ts = 0;
-            list.innerHTML = bc.map(c => {
+
+            let html = '';
+
+            // Total budget card
+            if (totalBudget > 0) {
+                const totalSpent = me.reduce((s, e) => s + e.amount, 0);
+                const pct = Math.min((totalSpent / totalBudget) * 100, 100);
+                const over = totalSpent > totalBudget;
+                html += `<div class="budget-item" style="border-left:4px solid ${over ? '#dc3545' : '#D4603A'}">
+                    <div class="budget-info">
+                        <div class="budget-category">📊 Total Monthly Budget</div>
+                        <div class="budget-progress"><div class="budget-progress-bar ${over ? 'over-budget' : ''}" style="width:${pct}%"></div></div>
+                        <div class="budget-text">${formatCurrency(totalSpent)} of ${formatCurrency(totalBudget)} ${over ? '⚠️ Over budget!' : ''}</div>
+                    </div>
+                    <div class="budget-amount">${pct.toFixed(0)}%</div>
+                </div>`;
+            }
+
+            // Category budgets
+            let tb = totalBudget, ts = totalBudget > 0 ? me.reduce((s, e) => s + e.amount, 0) : 0;
+            html += bc.map(c => {
                 const b = mb[c], s = spend[c] || 0, pct = Math.min((s / b) * 100, 100), over = s > b;
-                tb += b; ts += s;
+                if (totalBudget === 0) { tb += b; ts += s; }
                 return `<div class="budget-item"><div class="budget-info"><div class="budget-category">${c}</div><div class="budget-progress"><div class="budget-progress-bar ${over ? 'over-budget' : ''}" style="width:${pct}%"></div></div><div class="budget-text">${formatCurrency(s)} of ${formatCurrency(b)} ${over ? '⚠️ Over budget!' : ''}</div></div><div class="budget-amount">${pct.toFixed(0)}%</div></div>`;
             }).join('');
+
+            list.innerHTML = html;
             const rem = tb - ts;
             document.getElementById('budgetStatus').textContent = rem >= 0 ? `${formatCurrency(rem)} Left` : `${formatCurrency(Math.abs(rem))} Over`;
         }
