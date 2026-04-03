@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     siteName: "Kharcha Saathi",
     images: [
       {
-        url: "https://kharcha-saathi.vercel.app/og-image.jpg",
+        url: "https://kharcha-saathi.vercel.app/og-thumbnail.jpg",
         width: 1200,
         height: 630,
         alt: "Kharcha Saathi - Stress Free Tracking",
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Login - Kharcha Saathi",
     description: "Sign in to manage your finances with Kharcha Saathi",
-    images: ["https://kharcha-saathi.vercel.app/og-image.jpg"],
+    images: ["https://kharcha-saathi.vercel.app/og-thumbnail.jpg"],
   },
 };
 
