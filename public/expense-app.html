@@ -944,6 +944,98 @@
             font-style: italic;
         }
 
+        /* ===== Mascot Popup ===== */
+        .mascot-overlay {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
+            display: flex;
+            justify-content: center;
+            pointer-events: none;
+            padding: 0 15px 20px;
+        }
+
+        .mascot-popup {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            max-width: 380px;
+            width: 100%;
+            pointer-events: auto;
+            animation: mascotBounceIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .mascot-popup.leaving {
+            animation: mascotSlideOut 0.4s ease-in forwards;
+        }
+
+        .mascot-img {
+            width: 70px;
+            height: 70px;
+            flex-shrink: 0;
+            animation: mascotWiggle 0.6s ease-in-out 0.4s;
+        }
+
+        .mascot-bubble {
+            background: white;
+            border-radius: 16px 16px 16px 4px;
+            padding: 12px 16px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            flex: 1;
+            position: relative;
+            border: 1.5px solid #E8854A30;
+        }
+
+        .mascot-bubble-name {
+            font-size: 10px;
+            font-weight: 700;
+            color: #D4603A;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 3px;
+        }
+
+        .mascot-bubble-text {
+            font-size: 13px;
+            color: #333;
+            line-height: 1.4;
+        }
+
+        .mascot-bubble-amount {
+            font-size: 11px;
+            color: #888;
+            margin-top: 4px;
+        }
+
+        @keyframes mascotBounceIn {
+            0% { transform: translateY(120px); opacity: 0; }
+            60% { transform: translateY(-10px); opacity: 1; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes mascotSlideOut {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(120px); opacity: 0; }
+        }
+
+        @keyframes mascotWiggle {
+            0%, 100% { transform: rotate(0deg); }
+            20% { transform: rotate(-8deg); }
+            40% { transform: rotate(8deg); }
+            60% { transform: rotate(-5deg); }
+            80% { transform: rotate(5deg); }
+        }
+
+        body.dark .mascot-bubble {
+            background: #1a1a2e;
+            border-color: #2A1A10;
+        }
+        body.dark .mascot-bubble-name { color: #E8854A; }
+        body.dark .mascot-bubble-text { color: #F5E8D8; }
+        body.dark .mascot-bubble-amount { color: #887755; }
+
         body.dark .speedometer-card {
             background: linear-gradient(135deg, #0a0a14 0%, #111122 100%);
         }
@@ -1553,6 +1645,7 @@
 </head>
 <body>
     <div class="toast-container" id="toastContainer"></div>
+    <div class="mascot-overlay" id="mascotOverlay"></div>
 
     <!-- Currency Welcome Modal -->
     <div class="modal-overlay" id="currencyModal">
@@ -2498,6 +2591,37 @@
             return pickRemark(remarks.monthly);
         }
 
+        function showMascot(remark, amountText) {
+            const overlay = document.getElementById('mascotOverlay');
+            overlay.innerHTML = `
+                <div class="mascot-popup" id="mascotPopup">
+                    <img src="mascot.png" alt="Kharcha Saathi" class="mascot-img">
+                    <div class="mascot-bubble">
+                        <div class="mascot-bubble-name">Kharcha Saathi</div>
+                        <div class="mascot-bubble-text">${remark}</div>
+                        ${amountText ? '<div class="mascot-bubble-amount">' + amountText + '</div>' : ''}
+                    </div>
+                </div>
+            `;
+            // Auto dismiss after 3.5 seconds
+            setTimeout(function() {
+                const popup = document.getElementById('mascotPopup');
+                if (popup) {
+                    popup.classList.add('leaving');
+                    setTimeout(function() { overlay.innerHTML = ''; }, 400);
+                }
+            }, 3500);
+
+            // Tap to dismiss
+            overlay.querySelector('.mascot-popup').addEventListener('click', function() {
+                const popup = document.getElementById('mascotPopup');
+                if (popup) {
+                    popup.classList.add('leaving');
+                    setTimeout(function() { overlay.innerHTML = ''; }, 400);
+                }
+            });
+        }
+
         // ===== TIPS SYSTEM =====
         const tipContent = {
             expenses: { text: 'Tap 🎤 and say <strong>"200 food lunch"</strong> to add expenses by voice. Swipe left on any expense to delete it.' },
@@ -2952,7 +3076,7 @@
             document.querySelectorAll('.quick-cat-btn').forEach(b => b.classList.remove('selected'));
             renderExpenses(); renderBudgets(); renderMonthlyAnalytics(); renderMiniDashboard();
             const remark = getExpenseRemark(category, amount);
-            showToast(`${formatCurrency(amount)} added to ${category} — ${remark}`, 'success', 3500);
+            showMascot(remark, `${formatCurrency(amount)} added to ${category}`);
         }
 
         function deleteExpense(mk, id) {
