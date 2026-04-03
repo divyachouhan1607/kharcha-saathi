@@ -2692,9 +2692,7 @@
                 <div class="empty-subtitle">Expenses you add will show up here as yearly insights</div>
                 <button class="empty-action" onclick="switchTab('expenses'); document.querySelector('.tab').click();">Go to Expenses</button>
             </div>`; return; }
-            bd.innerHTML = `<h3 style="margin-top:30px;margin-bottom:15px;color:#495057;font-size:16px;">Monthly Breakdown</h3>` +
-                md.map((d, i) => { if (d.total === 0) return ''; const pct = (d.total / yt) * 100;
-                    return `<div class="category-bar"><div class="category-header"><span class="category-name">${mn[i]}</span><span class="category-amount">${formatCurrency(d.total)}</span></div><div class="category-bar-bg"><div class="category-bar-fill" style="width:${pct}%;background:linear-gradient(90deg,#D4603A 0%,#E8854A 100%);">${pct.toFixed(1)}%</div></div></div>`; }).join('');
+            bd.innerHTML = '';
             populateCategoryDropdown(); renderCategoryYearlyTrend();
         }
 
