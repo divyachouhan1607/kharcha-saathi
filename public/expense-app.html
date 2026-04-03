@@ -748,6 +748,13 @@
         body.dark .calendar-month-nav .cal-month-label { color: #F5E8D8; }
         body.dark .calendar-header { color: #887755; }
         body.dark .section-title { color: #F5E8D8; }
+        .auto-detect-banner { background:#FDF6F2; border-left:4px solid #E8854A; border-radius:10px; padding:12px 14px; margin-bottom:16px; display:flex; gap:10px; align-items:flex-start; }
+        .auto-detect-icon { font-size:18px; flex-shrink:0; }
+        .auto-detect-text { font-size:12px; color:#6c757d; line-height:1.5; }
+        .auto-detect-text strong { color:#D4603A; }
+        body.dark .auto-detect-banner { background:#161620; border-left-color:#E8854A; }
+        body.dark .auto-detect-text { color:#887755; }
+        body.dark .auto-detect-text strong { color:#E8854A; }
 
         /* ===== Speedometer ===== */
         .speedometer-card {
@@ -1629,6 +1636,13 @@
             <div class="summary-card">
                 <h2>Recurring Expenses</h2>
                 <div class="amount" id="recurringTotal">₹0/mo</div>
+            </div>
+
+            <div class="auto-detect-banner">
+                <span class="auto-detect-icon">🤖</span>
+                <div class="auto-detect-text">
+                    <strong>Auto-detected</strong> from your expense history. Just keep logging expenses — we'll spot your recurring charges like subscriptions, rent, and EMIs automatically.
+                </div>
             </div>
 
             <div class="recurring-summary" id="recurringSummary"></div>
