@@ -23,7 +23,7 @@ export default async function LoginPage() {
             Kharcha Saathi
           </h1>
           <p className="mt-1.5 text-sm text-gray-500">
-            Smart expense tracking for everyone
+            Track smarter! Spend better!
           </p>
         </div>
 

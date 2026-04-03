@@ -38,8 +38,7 @@ export default async function Home() {
           <span className="block text-[#D4603A]">Kharcha.</span>
         </h1>
         <p className="mt-6 text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-          Your smart companion for stress-free expense tracking. See where your money goes,
-          set budgets, and take control of your finances.
+          Track smarter! Spend better!
         </p>
         <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
           <form
