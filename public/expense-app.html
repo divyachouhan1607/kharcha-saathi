@@ -929,6 +929,21 @@
         .speedo-stat-value.warn { color: #e67e22; }
         .speedo-stat-value.bad { color: #dc3545; }
 
+        .speedo-remark {
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
+            margin-top: 10px;
+            font-style: italic;
+            min-height: 16px;
+        }
+
+        .summary-remark {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-top: 6px;
+            font-style: italic;
+        }
+
         body.dark .speedometer-card {
             background: linear-gradient(135deg, #0a0a14 0%, #111122 100%);
         }
@@ -1599,11 +1614,13 @@
                         <div class="speedo-stat-value" id="speedoSpent">₹0</div>
                     </div>
                 </div>
+                <div class="speedo-remark" id="speedoRemark"></div>
             </div>
 
             <div class="summary-card">
                 <h2>Total Spent This Month</h2>
                 <div class="amount" id="totalSpent">₹0</div>
+                <div class="summary-remark" id="summaryRemark"></div>
             </div>
 
             <!-- Mini Dashboard -->
@@ -2178,6 +2195,7 @@
                 document.getElementById('speedoDaysLeft').textContent = daysLeft;
                 document.getElementById('speedoSpent').textContent = formatCurrency(total);
                 document.getElementById('speedoSpent').className = 'speedo-stat-value ' + cls;
+                document.getElementById('speedoRemark').textContent = getSpeedoRemark(pctUsed, isOver);
             } else {
                 speedoCard.style.display = 'none';
             }
@@ -2346,6 +2364,140 @@
         }
 
         // ===== INIT =====
+        // ===== WITTY REMARKS ENGINE =====
+        const remarks = {
+            highSpend: [
+                "Woah.. That escalated quickly.",
+                "Well… that was financially ambitious.",
+                "Your wallet just felt that.",
+                "Bold strategy. Let's see how it plays out.",
+                "Spending like it's a celebration… is it?"
+            ],
+            food: [
+                "You didn't eat the money… right?",
+                "Your diet plan is confused.",
+                "At this point, you own a share in that restaurant.",
+                "Calories: high. Savings: low.",
+                "Food is love… but so is saving."
+            ],
+            shopping: [
+                "That 'add to cart' button really likes you.",
+                "Impulse bought, no regrets… yet.",
+                "Retail therapy session detected.",
+                "Was it a need… or a vibe?",
+                "Future you is raising an eyebrow."
+            ],
+            nearLimit: [
+                "Time to activate survival mode.",
+                "Your balance is getting shy.",
+                "Minimalist era has begun.",
+                "Maybe… let's just browse, not buy.",
+                "Even your wallet needs a break."
+            ],
+            overBudget: [
+                "Your budget and reality are not on speaking terms.",
+                "Financial plot twist this month.",
+                "We need to talk… about your spending habits.",
+                "You and 'just one more purchase' — iconic duo.",
+                "Consistency level: spending."
+            ],
+            smart: [
+                "Now that's how it's done.",
+                "Your future self just smiled.",
+                "Look at you being financially responsible.",
+                "Smart move. Very smart.",
+                "Main character energy, with discipline."
+            ],
+            monthly: [
+                "This month had… character.",
+                "We've seen better. We've seen worse.",
+                "Progress over perfection.",
+                "You're learning. That's what counts.",
+                "Some choices were made."
+            ],
+            normal: [
+                "Noted. Moving on.",
+                "Your future self is watching.",
+                "Every rupee counts.",
+                "Tracked. You're doing great.",
+                "One step closer to financial clarity."
+            ]
+        };
+
+        function pickRemark(pool) {
+            return pool[Math.floor(Math.random() * pool.length)];
+        }
+
+        function getExpenseRemark(category, amount) {
+            const mk = getMonthKey();
+            const me = expenses[mk] || [];
+            const mb = budgets[mk] || {};
+            const totalBudget = mb['__total__'] || Object.entries(mb).filter(([k]) => k !== '__total__').reduce((s, [, b]) => s + b, 0);
+            const totalSpent = me.reduce((s, e) => s + e.amount, 0);
+            const catLower = category.toLowerCase();
+
+            // Food category with multiple orders today
+            const todayFood = me.filter(function(e) { return e.category.toLowerCase() === 'food' && e.date === document.getElementById('date').value; });
+            if (catLower === 'food' && todayFood.length >= 2) {
+                return todayFood.length + ' orders today… Was it a need or a vibe?';
+            }
+
+            // Shopping repeat
+            const todayShopping = me.filter(function(e) { return e.category.toLowerCase() === 'shopping' && e.date === document.getElementById('date').value; });
+            if (catLower === 'shopping' && todayShopping.length >= 2) {
+                return 'Shopping again? Bold strategy.';
+            }
+
+            // High single expense (over 20% of budget)
+            if (totalBudget > 0 && amount > totalBudget * 0.2) {
+                return pickRemark(remarks.highSpend);
+            }
+
+            // Food overspending
+            if (catLower === 'food') return pickRemark(remarks.food);
+
+            // Shopping
+            if (catLower === 'shopping') return pickRemark(remarks.shopping);
+
+            // Entertainment
+            if (catLower === 'entertainment') return pickRemark(['Was it a need… or a vibe?', "Bold strategy. Let's see how it plays out.", 'Your future self is watching.']);
+
+            return pickRemark(remarks.normal);
+        }
+
+        function getSpeedoRemark(pctUsed, isOver) {
+            if (isOver) return pickRemark(remarks.overBudget);
+            if (pctUsed > 80) return pickRemark(remarks.nearLimit);
+            if (pctUsed > 50) return pickRemark(remarks.monthly);
+            if (pctUsed < 30) return pickRemark(remarks.smart);
+            return pickRemark(remarks.normal);
+        }
+
+        function getSummaryRemark() {
+            const mk = getMonthKey();
+            const me = expenses[mk] || [];
+            if (me.length === 0) return '';
+            const total = me.reduce((s, e) => s + e.amount, 0);
+            const mb = budgets[mk] || {};
+            const totalBudget = mb['__total__'] || Object.entries(mb).filter(([k]) => k !== '__total__').reduce((s, [, b]) => s + b, 0);
+
+            if (totalBudget > 0) {
+                const pct = (total / totalBudget) * 100;
+                if (pct > 100) return pickRemark(remarks.overBudget);
+                if (pct > 80) return pickRemark(remarks.nearLimit);
+                if (pct < 30) return pickRemark(remarks.smart);
+            }
+
+            // Check top category
+            const catSpend = {};
+            me.forEach(function(e) { catSpend[e.category] = (catSpend[e.category] || 0) + e.amount; });
+            const top = Object.entries(catSpend).sort(function(a, b) { return b[1] - a[1]; })[0];
+            if (top && top[0].toLowerCase() === 'food' && top[1] > total * 0.4) return pickRemark(remarks.food);
+            if (top && top[0].toLowerCase() === 'shopping' && top[1] > total * 0.3) return pickRemark(remarks.shopping);
+
+            return pickRemark(remarks.monthly);
+        }
+
         // ===== TIPS SYSTEM =====
         const tipContent = {
             expenses: { text: 'Tap 🎤 and say <strong>"200 food lunch"</strong> to add expenses by voice. Swipe left on any expense to delete it.' },
@@ -2799,7 +2951,8 @@
             saveData(); event.target.reset(); setTodayDate();
             document.querySelectorAll('.quick-cat-btn').forEach(b => b.classList.remove('selected'));
             renderExpenses(); renderBudgets(); renderMonthlyAnalytics(); renderMiniDashboard();
-            showToast(`${formatCurrency(amount)} added to ${category}`, 'success');
+            const remark = getExpenseRemark(category, amount);
+            showToast(`${formatCurrency(amount)} added to ${category} — ${remark}`, 'success', 3500);
         }
 
         function deleteExpense(mk, id) {
@@ -2841,6 +2994,7 @@
             const list = document.getElementById('expenseList');
             const total = me.reduce((s, e) => s + e.amount, 0);
             document.getElementById('totalSpent').textContent = formatCurrency(total);
+            document.getElementById('summaryRemark').textContent = me.length > 0 ? getSummaryRemark() : '';
 
             const filtered = hasFilters() ? filterList(me) : me;
             const rc = document.getElementById('resultsCount');
