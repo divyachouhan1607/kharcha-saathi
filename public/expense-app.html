@@ -1709,15 +1709,31 @@
             { name: 'Other', emoji: '📦', isDefault: true }
         ];
 
+        const currencyLocales = {
+            'INR': 'en-IN', 'USD': 'en-US', 'EUR': 'de-DE', 'GBP': 'en-GB', 'JPY': 'ja-JP', 'CNY': 'zh-CN',
+            'AUD': 'en-AU', 'CAD': 'en-CA', 'CHF': 'de-CH', 'SGD': 'en-SG', 'AED': 'ar-AE',
+            'SAR': 'ar-SA', 'ZAR': 'en-ZA', 'BRL': 'pt-BR', 'MXN': 'es-MX', 'KRW': 'ko-KR', 'RUB': 'ru-RU', 'TRY': 'tr-TR'
+        };
+
         function formatCurrency(amount) {
-            return (currencySymbols[currentCurrency] || '₹') + amount.toFixed(2);
+            const locale = currencyLocales[currentCurrency] || 'en-IN';
+            try {
+                return new Intl.NumberFormat(locale, {
+                    style: 'currency',
+                    currency: currentCurrency,
+                    minimumFractionDigits: currentCurrency === 'JPY' || currentCurrency === 'KRW' ? 0 : 2,
+                    maximumFractionDigits: currentCurrency === 'JPY' || currentCurrency === 'KRW' ? 0 : 2
+                }).format(amount);
+            } catch (e) {
+                return (currencySymbols[currentCurrency] || '₹') + amount.toFixed(2);
+            }
         }
 
         function updateCurrency() {
             currentCurrency = document.getElementById('currencySelect').value;
             localStorage.setItem('currency', currentCurrency);
             saveData();
-            document.getElementById('currencyPreviewAmount').textContent = (currencySymbols[currentCurrency] || '₹') + '1,234.56';
+            document.getElementById('currencyPreviewAmount').textContent = formatCurrency(1234.56);
             renderExpenses(); renderBudgets(); renderMonthlyAnalytics(); renderYearlyAnalytics(); renderMiniDashboard();
         }
 
@@ -2066,7 +2082,7 @@
             updateCategoryDropdowns(); renderQuickCategories(); updateFilterCategoryDropdown();
             updateScrollButtons(); renderMiniDashboard(); initVoiceInput();
             document.getElementById('category').addEventListener('change', function() { updateQuickCategorySelection(this.value); });
-            document.getElementById('currencyPreviewAmount').textContent = (currencySymbols[currentCurrency] || '₹') + '1,234.56';
+            document.getElementById('currencyPreviewAmount').textContent = formatCurrency(1234.56);
         }
 
         function scrollTabs(d) {
