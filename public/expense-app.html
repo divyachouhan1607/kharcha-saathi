@@ -495,6 +495,284 @@
             border-color: #D4603A;
         }
 
+        /* ===== Recurring Expenses ===== */
+        .recurring-item {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid #D4603A;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .recurring-icon {
+            font-size: 28px;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #FDF6F2;
+            border-radius: 10px;
+            flex-shrink: 0;
+        }
+
+        .recurring-info { flex: 1; min-width: 0; }
+
+        .recurring-name {
+            font-weight: 700;
+            font-size: 15px;
+            color: #333;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .recurring-meta {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .recurring-right {
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .recurring-amount {
+            font-weight: 700;
+            font-size: 16px;
+            color: #D4603A;
+        }
+
+        .recurring-freq {
+            font-size: 11px;
+            color: #888;
+        }
+
+        .recurring-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 3px;
+        }
+
+        .recurring-badge.active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .recurring-badge.upcoming {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .recurring-badge.overdue {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .recurring-summary {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .recurring-summary-card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            border: 1.5px solid #E8854A30;
+        }
+
+        .recurring-summary-card .rs-label {
+            font-size: 11px;
+            color: #D4603A;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .recurring-summary-card .rs-value {
+            font-size: 20px;
+            font-weight: 800;
+            color: #333;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+            margin-bottom: 20px;
+        }
+
+        .calendar-header {
+            text-align: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: #888;
+            padding: 6px 0;
+        }
+
+        .calendar-day {
+            text-align: center;
+            padding: 8px 2px;
+            font-size: 12px;
+            border-radius: 8px;
+            min-height: 38px;
+            position: relative;
+        }
+
+        .calendar-day.empty { background: none; }
+
+        .calendar-day.today {
+            background: #D4603A;
+            color: white;
+            font-weight: 700;
+        }
+
+        .calendar-day.has-recurring {
+            background: #FDF6F2;
+            font-weight: 600;
+        }
+
+        .calendar-day.has-recurring::after {
+            content: '';
+            display: block;
+            width: 6px;
+            height: 6px;
+            background: #D4603A;
+            border-radius: 50%;
+            margin: 2px auto 0;
+        }
+
+        .calendar-day.today.has-recurring::after {
+            background: white;
+        }
+
+        .calendar-month-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .calendar-month-nav button {
+            background: #FDF6F2;
+            border: 1.5px solid #E8854A30;
+            color: #D4603A;
+            padding: 6px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .calendar-month-nav .cal-month-label {
+            font-weight: 700;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #333;
+            margin: 20px 0 12px;
+        }
+
+        body.dark .recurring-item { background: #161620; border-left-color: #E8854A; }
+        body.dark .recurring-icon { background: #2A1A10; }
+        body.dark .recurring-name { color: #F5E8D8; }
+        body.dark .recurring-meta { color: #887755; }
+        body.dark .recurring-amount { color: #E8854A; }
+        body.dark .recurring-freq { color: #887755; }
+        body.dark .recurring-badge.active { background: #1a3a1a; color: #6fcf7f; }
+        body.dark .recurring-badge.upcoming { background: #3a3010; color: #e6c86e; }
+        body.dark .recurring-badge.overdue { background: #3a1a1a; color: #f08080; }
+        body.dark .recurring-summary-card { background: #161620; border-color: #2A1A10; }
+        body.dark .recurring-summary-card .rs-label { color: #E8854A; }
+        body.dark .recurring-summary-card .rs-value { color: #F5E8D8; }
+        body.dark .calendar-day.has-recurring { background: #2A1A10; color: #F5E8D8; }
+        body.dark .calendar-day.today { background: #D4603A; color: white; }
+        body.dark .calendar-month-nav button { background: #161620; border-color: #2A1A10; color: #E8854A; }
+        body.dark .calendar-month-nav .cal-month-label { color: #F5E8D8; }
+        body.dark .calendar-header { color: #887755; }
+        body.dark .section-title { color: #F5E8D8; }
+
+        /* ===== Safe to Spend Card ===== */
+        .safe-to-spend-card {
+            background: linear-gradient(135deg, #1B7A3D 0%, #28a745 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 12px;
+            display: none;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .safe-to-spend-card.over {
+            background: linear-gradient(135deg, #c0392b 0%, #dc3545 100%);
+        }
+
+        .safe-to-spend-card.warning {
+            background: linear-gradient(135deg, #c77600 0%, #e67e22 100%);
+        }
+
+        .safe-to-spend-card .sts-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.9;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .safe-to-spend-card .sts-amount {
+            font-size: 38px;
+            font-weight: 800;
+            line-height: 1.1;
+        }
+
+        .safe-to-spend-card .sts-sub {
+            font-size: 13px;
+            opacity: 0.85;
+            margin-top: 6px;
+        }
+
+        .safe-to-spend-card .sts-bar-bg {
+            height: 6px;
+            background: rgba(255,255,255,0.25);
+            border-radius: 3px;
+            margin-top: 12px;
+            overflow: hidden;
+        }
+
+        .safe-to-spend-card .sts-bar {
+            height: 100%;
+            background: white;
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        body.dark .safe-to-spend-card {
+            background: linear-gradient(135deg, #145A2C 0%, #1B7A3D 100%);
+        }
+        body.dark .safe-to-spend-card.over {
+            background: linear-gradient(135deg, #8B1A1A 0%, #a82020 100%);
+        }
+        body.dark .safe-to-spend-card.warning {
+            background: linear-gradient(135deg, #8B5E00 0%, #b87900 100%);
+        }
+
         /* ===== Mini Dashboard ===== */
         .mini-dashboard {
             display: grid;
@@ -975,6 +1253,7 @@
             <div class="tabs" id="tabsContainer">
                 <button class="tab active" onclick="switchTab('expenses')">Expenses</button>
                 <button class="tab" onclick="switchTab('budgets')">Budgets</button>
+                <button class="tab" onclick="switchTab('recurring')">Recurring</button>
                 <button class="tab" onclick="switchTab('monthly')">Monthly</button>
                 <button class="tab" onclick="switchTab('yearly')">Yearly</button>
                 <button class="tab" onclick="switchTab('settings')">Settings</button>
@@ -985,6 +1264,14 @@
 
         <!-- Expenses Tab -->
         <div id="expenses" class="tab-content active">
+            <!-- Safe to Spend (visible only when budgets are set) -->
+            <div class="safe-to-spend-card" id="safeToSpendCard">
+                <div class="sts-label">Safe to Spend</div>
+                <div class="sts-amount" id="stsAmount">₹0</div>
+                <div class="sts-sub" id="stsSub"></div>
+                <div class="sts-bar-bg"><div class="sts-bar" id="stsBar"></div></div>
+            </div>
+
             <div class="summary-card">
                 <h2>Total Spent This Month</h2>
                 <div class="amount" id="totalSpent">₹0</div>
@@ -1091,6 +1378,27 @@
             </form>
 
             <div id="budgetList"></div>
+        </div>
+
+        <!-- Recurring Expenses Tab -->
+        <div id="recurring" class="tab-content">
+            <div class="summary-card">
+                <h2>Recurring Expenses</h2>
+                <div class="amount" id="recurringTotal">₹0/mo</div>
+            </div>
+
+            <div class="recurring-summary" id="recurringSummary"></div>
+
+            <div class="section-title">📅 Calendar</div>
+            <div class="calendar-month-nav">
+                <button onclick="changeCalMonth(-1)">‹ Prev</button>
+                <span class="cal-month-label" id="calMonthLabel"></span>
+                <button onclick="changeCalMonth(1)">Next ›</button>
+            </div>
+            <div class="calendar-grid" id="calendarGrid"></div>
+
+            <div class="section-title">🔄 Detected Subscriptions</div>
+            <div id="recurringList"></div>
         </div>
 
         <!-- Monthly Overview Tab -->
@@ -1331,14 +1639,23 @@
             recognition.lang = 'en-IN';
             recognition.interimResults = false;
             recognition.maxAlternatives = 1;
+            recognition.continuous = false;
             recognition.onresult = function(e) {
                 const t = e.results[0][0].transcript;
                 document.getElementById('voiceStatus').textContent = '✓ Heard: "' + t + '"';
                 parseVoiceInput(t);
                 stopListening();
             };
-            recognition.onerror = function() {
-                document.getElementById('voiceStatus').textContent = '⚠️ Could not hear clearly. Try again.';
+            recognition.onerror = function(e) {
+                const messages = {
+                    'not-allowed': '🔒 Microphone access denied. Please allow mic permission in browser settings.',
+                    'no-speech': '🔇 No speech detected. Tap mic and speak clearly.',
+                    'audio-capture': '🎤 No microphone found. Check your device mic.',
+                    'network': '🌐 Network error. Voice input needs an internet connection.',
+                    'aborted': ''
+                };
+                const msg = messages[e.error] || '⚠️ Could not hear clearly. Try again.';
+                if (msg) document.getElementById('voiceStatus').textContent = msg;
                 stopListening();
             };
             recognition.onend = function() { stopListening(); };
@@ -1349,12 +1666,30 @@
         }
 
         function startListening() {
-            if (!recognition) return;
+            if (!recognition) { initVoiceInput(); if (!recognition) return; }
+            // Request mic permission explicitly on mobile
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream) {
+                    stream.getTracks().forEach(function(t) { t.stop(); }); // release immediately
+                    actuallyStartListening();
+                }).catch(function() {
+                    document.getElementById('voiceStatus').textContent = '🔒 Microphone access denied. Please allow mic permission in browser settings.';
+                });
+            } else {
+                actuallyStartListening();
+            }
+        }
+
+        function actuallyStartListening() {
             isListening = true;
             const btn = document.getElementById('voiceBtn');
             btn.classList.add('listening'); btn.textContent = '⏹';
             document.getElementById('voiceStatus').textContent = '🎙️ Listening... speak now';
-            recognition.start();
+            try { recognition.start(); } catch(e) {
+                // Already started — stop and restart
+                recognition.stop();
+                setTimeout(function() { try { recognition.start(); } catch(e2) {} }, 200);
+            }
         }
 
         function stopListening() {
@@ -1441,6 +1776,38 @@
             const dailyAvg = days > 0 ? total / days : 0;
 
             const totalBudget = Object.values(mb).reduce((s, b) => s + b, 0);
+
+            // ===== SAFE TO SPEND CARD =====
+            const stsCard = document.getElementById('safeToSpendCard');
+            if (totalBudget > 0) {
+                const dim = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate();
+                const daysLeft = isCur ? Math.max(1, dim - today.getDate() + 1) : dim;
+                const safeToSpend = totalBudget - total;
+                const perDay = safeToSpend / daysLeft;
+                const pctUsed = Math.min((total / totalBudget) * 100, 100);
+                const pctRemaining = Math.max(100 - pctUsed, 0);
+
+                stsCard.style.display = 'block';
+                stsCard.classList.remove('over', 'warning');
+                if (safeToSpend <= 0) {
+                    stsCard.classList.add('over');
+                } else if (safeToSpend / totalBudget < 0.2) {
+                    stsCard.classList.add('warning');
+                }
+
+                document.getElementById('stsAmount').textContent = safeToSpend >= 0
+                    ? formatCurrency(safeToSpend)
+                    : '−' + formatCurrency(Math.abs(safeToSpend));
+
+                document.getElementById('stsSub').textContent = safeToSpend > 0
+                    ? `${formatCurrency(perDay)}/day for ${daysLeft} day${daysLeft > 1 ? 's' : ''} remaining`
+                    : `Over budget by ${formatCurrency(Math.abs(safeToSpend))}`;
+
+                document.getElementById('stsBar').style.width = pctRemaining + '%';
+            } else {
+                stsCard.style.display = 'none';
+            }
+
             let budgetCard = '';
             if (totalBudget > 0) {
                 const dim = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate();
@@ -1633,6 +2000,7 @@
             document.getElementById(tabName).classList.add('active');
             if (tabName === 'monthly') renderMonthlyAnalytics();
             else if (tabName === 'yearly') renderYearlyAnalytics();
+            else if (tabName === 'recurring') renderRecurring();
         }
 
         function changeAnalyticsYear(d) { analyticsYear += d; renderYearlyAnalytics(); }
@@ -2066,6 +2434,192 @@
             const tf = Math.max(14, size * 0.05), vf = Math.max(16, size * 0.06);
             ctx.font = `bold ${tf}px -apple-system`; ctx.textAlign = 'center'; ctx.fillText('Total', cx, cy - 5);
             ctx.font = `bold ${vf}px -apple-system`; ctx.fillText((currencySymbols[currentCurrency] || '₹') + total.toFixed(0), cx, cy + vf - 2);
+        }
+
+        // ===== RECURRING EXPENSE DETECTION =====
+        let calendarMonth = new Date();
+
+        function detectRecurring() {
+            const allExpenses = [];
+            Object.keys(expenses).forEach(mk => {
+                (expenses[mk] || []).forEach(e => {
+                    allExpenses.push({ ...e, monthKey: mk });
+                });
+            });
+
+            // Group by normalized description (lowercase, trimmed)
+            const groups = {};
+            allExpenses.forEach(e => {
+                const key = e.description.trim().toLowerCase();
+                if (!key) return;
+                if (!groups[key]) groups[key] = [];
+                groups[key].push(e);
+            });
+
+            const recurring = [];
+            Object.entries(groups).forEach(([key, items]) => {
+                // Need at least 2 occurrences in different months
+                const months = [...new Set(items.map(e => e.monthKey))];
+                if (months.length < 2) return;
+
+                // Check amount consistency (within 20% tolerance)
+                const amounts = items.map(e => e.amount);
+                const avgAmt = amounts.reduce((s, a) => s + a, 0) / amounts.length;
+                const consistent = amounts.every(a => Math.abs(a - avgAmt) / avgAmt < 0.2);
+                if (!consistent) return;
+
+                // Sort months chronologically
+                months.sort();
+
+                // Get most common day of month
+                const days = items.map(e => parseInt(e.date.split('-')[2]));
+                const dayFreq = {};
+                days.forEach(d => { dayFreq[d] = (dayFreq[d] || 0) + 1; });
+                const typicalDay = +Object.entries(dayFreq).sort((a, b) => b[1] - a[1])[0][0];
+
+                // Get the latest occurrence
+                const sortedItems = [...items].sort((a, b) => b.date.localeCompare(a.date));
+                const lastDate = new Date(sortedItems[0].date);
+
+                // Predict next date
+                const nextDate = new Date(lastDate);
+                nextDate.setMonth(nextDate.getMonth() + 1);
+                nextDate.setDate(Math.min(typicalDay, new Date(nextDate.getFullYear(), nextDate.getMonth() + 1, 0).getDate()));
+
+                const category = items[0].category;
+                const emoji = (categories.find(c => c.name === category) || {}).emoji || '🔄';
+
+                recurring.push({
+                    name: items[0].description,
+                    category,
+                    emoji,
+                    avgAmount: avgAmt,
+                    occurrences: months.length,
+                    typicalDay,
+                    lastDate: sortedItems[0].date,
+                    nextDate,
+                    months
+                });
+            });
+
+            // Sort by amount (highest first)
+            recurring.sort((a, b) => b.avgAmount - a.avgAmount);
+            return recurring;
+        }
+
+        function renderRecurring() {
+            const recurring = detectRecurring();
+            const list = document.getElementById('recurringList');
+            const summary = document.getElementById('recurringSummary');
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const totalMonthly = recurring.reduce((s, r) => s + r.avgAmount, 0);
+            document.getElementById('recurringTotal').textContent = formatCurrency(totalMonthly) + '/mo';
+
+            // Summary cards
+            summary.innerHTML = `
+                <div class="recurring-summary-card">
+                    <div class="rs-label">Subscriptions</div>
+                    <div class="rs-value">${recurring.length}</div>
+                </div>
+                <div class="recurring-summary-card">
+                    <div class="rs-label">Yearly Cost</div>
+                    <div class="rs-value">${formatCurrency(totalMonthly * 12)}</div>
+                </div>
+            `;
+
+            if (recurring.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🔍</div>
+                        <div class="empty-title">No recurring expenses detected</div>
+                        <div class="empty-subtitle">Keep logging expenses — we'll auto-detect subscriptions and recurring charges when they appear across multiple months with similar amounts.</div>
+                    </div>`;
+                renderCalendar(recurring);
+                return;
+            }
+
+            list.innerHTML = recurring.map(r => {
+                const next = r.nextDate;
+                const diffDays = Math.ceil((next - today) / (1000 * 60 * 60 * 24));
+                let badge, badgeCls;
+                if (diffDays < 0) {
+                    badge = `${Math.abs(diffDays)}d overdue`;
+                    badgeCls = 'overdue';
+                } else if (diffDays <= 7) {
+                    badge = diffDays === 0 ? 'Due today' : `In ${diffDays}d`;
+                    badgeCls = 'upcoming';
+                } else {
+                    badge = `In ${diffDays}d`;
+                    badgeCls = 'active';
+                }
+
+                const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+                const nextStr = `${monthNames[next.getMonth()]} ${next.getDate()}`;
+
+                return `
+                    <div class="recurring-item">
+                        <div class="recurring-icon">${r.emoji}</div>
+                        <div class="recurring-info">
+                            <div class="recurring-name">${r.name}</div>
+                            <div class="recurring-meta">${r.category} · Next: ${nextStr}</div>
+                            <span class="recurring-badge ${badgeCls}">${badge}</span>
+                        </div>
+                        <div class="recurring-right">
+                            <div class="recurring-amount">${formatCurrency(r.avgAmount)}</div>
+                            <div class="recurring-freq">${r.occurrences} months</div>
+                        </div>
+                    </div>`;
+            }).join('');
+
+            renderCalendar(recurring);
+        }
+
+        function changeCalMonth(delta) {
+            calendarMonth.setMonth(calendarMonth.getMonth() + delta);
+            renderRecurring();
+        }
+
+        function renderCalendar(recurring) {
+            const grid = document.getElementById('calendarGrid');
+            const year = calendarMonth.getFullYear();
+            const month = calendarMonth.getMonth();
+            const today = new Date();
+
+            const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+            document.getElementById('calMonthLabel').textContent = `${monthNames[month]} ${year}`;
+
+            const firstDay = new Date(year, month, 1).getDay(); // 0=Sun
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            // Find which days have recurring charges
+            const recurringDays = {};
+            recurring.forEach(r => {
+                const day = Math.min(r.typicalDay, daysInMonth);
+                if (!recurringDays[day]) recurringDays[day] = [];
+                recurringDays[day].push(r.name);
+            });
+
+            let html = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
+                .map(d => `<div class="calendar-header">${d}</div>`).join('');
+
+            // Empty cells before first day
+            for (let i = 0; i < firstDay; i++) {
+                html += '<div class="calendar-day empty"></div>';
+            }
+
+            for (let d = 1; d <= daysInMonth; d++) {
+                const isToday = d === today.getDate() && month === today.getMonth() && year === today.getFullYear();
+                const hasRecurring = recurringDays[d];
+                const classes = ['calendar-day'];
+                if (isToday) classes.push('today');
+                if (hasRecurring) classes.push('has-recurring');
+                const tooltip = hasRecurring ? ` title="${hasRecurring.join(', ')}"` : '';
+                html += `<div class="${classes.join(' ')}"${tooltip}>${d}</div>`;
+            }
+
+            grid.innerHTML = html;
         }
 
         function renderMonthlyAnalytics() {
