@@ -1783,19 +1783,15 @@
                 <button onclick="changeAnalyticsYear(1)">▶</button>
             </div>
 
-            <div style="display: flex; gap: 10px; margin: 20px 0;">
-                <button class="btn btn-primary" id="yearlyBarBtn" onclick="switchYearlyChartType('bar')" style="flex: 1;">📊 Bar Graph</button>
-                <button class="btn btn-secondary" id="yearlyLineBtn" onclick="switchYearlyChartType('line')" style="flex: 1;">📈 Line Graph</button>
-            </div>
-
-            <div style="max-width: 100%; margin: 20px auto; overflow-x: auto;">
+            <h3 style="margin: 20px 0 10px; color: #495057; font-size: 16px; text-align: center;">📊 Monthly Spending</h3>
+            <div style="max-width: 100%; margin: 0 auto 20px; overflow-x: auto;">
                 <canvas id="yearlyChart" width="600" height="400"></canvas>
             </div>
 
             <div id="yearlyBreakdown"></div>
 
             <div style="margin-top: 40px; padding-top: 30px; border-top: 2px solid #dee2e6;">
-                <h3 style="margin: 0 0 20px 0; color: #495057; font-size: 18px; text-align: center;">📊 Category-wise Analysis</h3>
+                <h3 style="margin: 0 0 20px 0; color: #495057; font-size: 18px; text-align: center;">📈 Category-wise Trends</h3>
                 <div class="form-group">
                     <label>Select Category to Analyze</label>
                     <select id="yearlyCategory" onchange="renderCategoryYearlyTrend()" style="width: 100%; padding: 12px; border: 2px solid #dee2e6; border-radius: 8px; font-size: 16px;">
@@ -2355,7 +2351,7 @@
             expenses: { text: 'Tap 🎤 and say <strong>"200 food lunch"</strong> to add expenses by voice. Swipe left on any expense to delete it.' },
             budgets: { text: 'Set a <strong>total monthly budget</strong> for a quick overview, or go <strong>category-wise</strong> for detailed tracking. Check the speedometer on the Expenses tab!' },
             monthly: { text: 'See the big picture of your monthly expenses in the chart. Want details? Tap ▼ on any category in <strong>Detailed Breakdown</strong> to see where the money actually went.' },
-            yearly: { text: 'Use the <strong>category dropdown</strong> below the chart to see yearly trends for a specific category. Switch between bar and line views.' },
+            yearly: { text: 'The bar chart shows your <strong>total monthly spending</strong>. Use the <strong>category dropdown</strong> below to see yearly trends for a specific category as a line graph.' },
             recurring: { text: '<strong>Auto-detected</strong> from your expense history. Just keep logging expenses — we\'ll spot recurring charges like subscriptions, rent, and EMIs automatically.' },
             settings: { text: 'Change your <strong>currency</strong> here — it also changes the comma format. Add <strong>custom categories</strong> with emojis below!' },
             data: { text: 'Export <strong>JSON</strong> for a full backup (expenses + budgets + categories). Export <strong>CSV</strong> to open in Excel or Google Sheets.' },
@@ -2637,13 +2633,7 @@
 
         function changeAnalyticsYear(d) { analyticsYear += d; renderYearlyAnalytics(); }
 
-        function switchYearlyChartType(type) {
-            yearlyChartType = type;
-            const bar = document.getElementById('yearlyBarBtn'), line = document.getElementById('yearlyLineBtn');
-            if (type === 'bar') { bar.className = 'btn btn-primary'; line.className = 'btn btn-secondary'; }
-            else { line.className = 'btn btn-primary'; bar.className = 'btn btn-secondary'; }
-            drawYearlyChart();
-        }
+        // yearlyChartType is always 'bar' now for total expenses
 
         function abbreviateAmount(amount, symbol) {
             if (amount >= 100000) return symbol + Math.round(amount / 1000) + 'K';
@@ -2671,28 +2661,15 @@
             ctx.strokeStyle = '#dee2e6'; ctx.lineWidth = 2;
             ctx.beginPath(); ctx.moveTo(p, p); ctx.lineTo(p, canvas.height - p); ctx.lineTo(canvas.width - p, canvas.height - p); ctx.stroke();
 
-            if (yearlyChartType === 'bar') {
-                mt.forEach((a, i) => {
-                    const bh = (a / max) * ch, x = p + i * (cw / 12) + 5, y = canvas.height - p - bh;
-                    const g = ctx.createLinearGradient(x, y, x, canvas.height - p);
-                    g.addColorStop(0, '#D4603A'); g.addColorStop(1, '#E8854A');
-                    ctx.fillStyle = g; ctx.fillRect(x, y, bw, bh);
-                    ctx.fillStyle = '#495057'; ctx.font = '12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto';
-                    ctx.textAlign = 'center'; ctx.fillText(mn[i], x + bw / 2, canvas.height - p + 20);
-                    if (bh > 30 && a > 0) { ctx.fillStyle = 'white'; ctx.font = 'bold 10px -apple-system'; ctx.fillText(abbreviateAmount(a, sym), x + bw / 2, y + 15); }
-                });
-            } else {
-                ctx.strokeStyle = '#D4603A'; ctx.lineWidth = 3; ctx.beginPath();
-                mt.forEach((a, i) => { const x = p + i * (cw / 12) + (cw / 24), y = canvas.height - p - (a / max) * ch; i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); });
-                ctx.stroke();
-                mt.forEach((a, i) => {
-                    const x = p + i * (cw / 12) + (cw / 24), y = canvas.height - p - (a / max) * ch;
-                    ctx.fillStyle = '#D4603A'; ctx.beginPath(); ctx.arc(x, y, 6, 0, 2 * Math.PI); ctx.fill();
-                    ctx.fillStyle = 'white'; ctx.beginPath(); ctx.arc(x, y, 3, 0, 2 * Math.PI); ctx.fill();
-                    ctx.fillStyle = '#495057'; ctx.font = '12px -apple-system'; ctx.textAlign = 'center'; ctx.fillText(mn[i], x, canvas.height - p + 20);
-                    if (a > 0) { ctx.fillStyle = '#D4603A'; ctx.font = 'bold 10px -apple-system'; ctx.fillText(abbreviateAmount(a, sym), x, y - 10); }
-                });
-            }
+            mt.forEach((a, i) => {
+                const bh = (a / max) * ch, x = p + i * (cw / 12) + 5, y = canvas.height - p - bh;
+                const g = ctx.createLinearGradient(x, y, x, canvas.height - p);
+                g.addColorStop(0, '#D4603A'); g.addColorStop(1, '#E8854A');
+                ctx.fillStyle = g; ctx.fillRect(x, y, bw, bh);
+                ctx.fillStyle = '#495057'; ctx.font = '12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto';
+                ctx.textAlign = 'center'; ctx.fillText(mn[i], x + bw / 2, canvas.height - p + 20);
+                if (bh > 30 && a > 0) { ctx.fillStyle = 'white'; ctx.font = 'bold 10px -apple-system'; ctx.fillText(abbreviateAmount(a, sym), x + bw / 2, y + 15); }
+            });
             ctx.fillStyle = '#6c757d'; ctx.font = '11px -apple-system'; ctx.textAlign = 'right';
             for (let i = 0; i <= 5; i++) { const v = Math.round((max / 5) * i), y = canvas.height - p - (ch / 5) * i; ctx.fillText(abbreviateAmount(v, sym), p - 10, y + 4); }
         }
