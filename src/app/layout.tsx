@@ -21,9 +21,9 @@ export const metadata: Metadata = {
     description: "Smart expense tracking for everyone",
     images: [
       {
-        url: "/og-image.png",
-        width: 1080,
-        height: 1080,
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
         alt: "Kharcha Saathi - Stress Free Tracking",
       },
     ],
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Kharcha Saathi",
     description: "Smart expense tracking for everyone",
-    images: ["/og-image.png"],
+    images: ["/og-image.jpg"],
   },
 };
 
