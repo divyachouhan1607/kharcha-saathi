@@ -14,6 +14,9 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://kharcha-saathi.vercel.app"),
+  alternates: {
+    canonical: "https://kharcha-saathi.vercel.app",
+  },
   title: "Kharcha Saathi",
   description: "Smart expense tracking for everyone",
   openGraph: {
@@ -23,7 +26,7 @@ export const metadata: Metadata = {
     siteName: "Kharcha Saathi",
     images: [
       {
-        url: "/og-image.jpg",
+        url: "https://kharcha-saathi.vercel.app/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "Kharcha Saathi - Stress Free Tracking",
@@ -35,7 +38,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Kharcha Saathi",
     description: "Smart expense tracking for everyone",
-    images: ["/og-image.jpg"],
+    images: ["https://kharcha-saathi.vercel.app/og-image.jpg"],
   },
 };
 
