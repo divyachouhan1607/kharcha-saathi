@@ -833,6 +833,143 @@
             background: linear-gradient(135deg, #0a0a14 0%, #111122 100%);
         }
 
+        /* ===== Currency Welcome Modal ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.visible {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-box {
+            background: white;
+            border-radius: 20px;
+            padding: 30px 24px;
+            max-width: 360px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-emoji {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .modal-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: #333;
+            margin-bottom: 6px;
+        }
+
+        .modal-subtitle {
+            font-size: 14px;
+            color: #888;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .modal-currency-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 20px;
+            max-height: 240px;
+            overflow-y: auto;
+        }
+
+        .modal-currency-btn {
+            background: #f8f8f8;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            padding: 10px 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .modal-currency-btn:hover {
+            border-color: #E8854A;
+            background: #FDF6F2;
+        }
+
+        .modal-currency-btn.selected {
+            border-color: #D4603A;
+            background: linear-gradient(135deg, #D4603A 0%, #E8854A 100%);
+            color: white;
+        }
+
+        .modal-currency-flag {
+            font-size: 20px;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .modal-currency-code {
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .modal-currency-symbol {
+            font-size: 10px;
+            opacity: 0.7;
+        }
+
+        .modal-confirm-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #D4603A 0%, #E8854A 100%);
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .modal-confirm-btn:hover {
+            box-shadow: 0 4px 15px rgba(212, 96, 58, 0.4);
+        }
+
+        .modal-confirm-btn:active {
+            transform: scale(0.97);
+        }
+
+        .modal-confirm-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        body.dark .modal-box { background: #161620; }
+        body.dark .modal-title { color: #F5E8D8; }
+        body.dark .modal-subtitle { color: #887755; }
+        body.dark .modal-currency-btn { background: #0A0A0F; border-color: #2A1A10; color: #F5E8D8; }
+        body.dark .modal-currency-btn:hover { background: #2A1A10; border-color: #E8854A; }
+        body.dark .modal-currency-btn.selected { background: linear-gradient(135deg, #D4603A 0%, #E8854A 100%); color: white; }
+
         /* ===== Mini Dashboard ===== */
         .mini-dashboard {
             display: grid;
@@ -1301,6 +1438,18 @@
 </head>
 <body>
     <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Currency Welcome Modal -->
+    <div class="modal-overlay" id="currencyModal">
+        <div class="modal-box">
+            <div class="modal-emoji">💱</div>
+            <div class="modal-title">Welcome to Kharcha Saathi!</div>
+            <div class="modal-subtitle">Choose your currency to get started</div>
+            <div class="modal-currency-grid" id="modalCurrencyGrid"></div>
+            <button class="modal-confirm-btn" id="modalConfirmBtn" disabled onclick="confirmCurrencyModal()">Select a Currency</button>
+        </div>
+    </div>
+
     <div class="container">
         <div class="header">
             <div class="header-top">
@@ -2074,6 +2223,65 @@
         }
 
         // ===== INIT =====
+        // ===== CURRENCY WELCOME MODAL =====
+        let modalSelectedCurrency = null;
+
+        function showCurrencyModal() {
+            const currencies = [
+                { code: 'INR', flag: '🇮🇳', symbol: '₹' },
+                { code: 'USD', flag: '🇺🇸', symbol: '$' },
+                { code: 'EUR', flag: '🇪🇺', symbol: '€' },
+                { code: 'GBP', flag: '🇬🇧', symbol: '£' },
+                { code: 'JPY', flag: '🇯🇵', symbol: '¥' },
+                { code: 'CNY', flag: '🇨🇳', symbol: '¥' },
+                { code: 'AUD', flag: '🇦🇺', symbol: 'A$' },
+                { code: 'CAD', flag: '🇨🇦', symbol: 'C$' },
+                { code: 'CHF', flag: '🇨🇭', symbol: 'CHF' },
+                { code: 'SGD', flag: '🇸🇬', symbol: 'S$' },
+                { code: 'AED', flag: '🇦🇪', symbol: 'د.إ' },
+                { code: 'SAR', flag: '🇸🇦', symbol: '﷼' },
+                { code: 'ZAR', flag: '🇿🇦', symbol: 'R' },
+                { code: 'BRL', flag: '🇧🇷', symbol: 'R$' },
+                { code: 'MXN', flag: '🇲🇽', symbol: 'MX$' },
+                { code: 'KRW', flag: '🇰🇷', symbol: '₩' },
+                { code: 'RUB', flag: '🇷🇺', symbol: '₽' },
+                { code: 'TRY', flag: '🇹🇷', symbol: '₺' },
+            ];
+
+            const grid = document.getElementById('modalCurrencyGrid');
+            grid.innerHTML = currencies.map(c => `
+                <div class="modal-currency-btn" onclick="selectModalCurrency('${c.code}', this)">
+                    <span class="modal-currency-flag">${c.flag}</span>
+                    <span class="modal-currency-code">${c.code}</span>
+                    <span class="modal-currency-symbol">${c.symbol}</span>
+                </div>
+            `).join('');
+
+            document.getElementById('currencyModal').classList.add('visible');
+        }
+
+        function selectModalCurrency(code, el) {
+            modalSelectedCurrency = code;
+            document.querySelectorAll('.modal-currency-btn').forEach(b => b.classList.remove('selected'));
+            el.classList.add('selected');
+            const btn = document.getElementById('modalConfirmBtn');
+            btn.disabled = false;
+            btn.textContent = 'Continue with ' + code;
+        }
+
+        function confirmCurrencyModal() {
+            if (!modalSelectedCurrency) return;
+            currentCurrency = modalSelectedCurrency;
+            localStorage.setItem('currency', currentCurrency);
+            localStorage.setItem('currencyChosen', 'true');
+            document.getElementById('currencySelect').value = currentCurrency;
+            document.getElementById('currencyModal').classList.remove('visible');
+            saveData();
+            renderExpenses(); renderBudgets(); renderMonthlyAnalytics(); renderMiniDashboard();
+            document.getElementById('currencyPreviewAmount').textContent = formatCurrency(1234.56);
+            showToast('Currency set to ' + currentCurrency + '. You can change it anytime in Settings → Currency.', 'success', 5000);
+        }
+
         function init() {
             loadTheme();
             loadData(); setTodayDate(); updateMonthDisplay();
@@ -2081,6 +2289,8 @@
             renderExpenses(); renderBudgets(); renderMonthlyAnalytics(); renderCategories();
             updateCategoryDropdowns(); renderQuickCategories(); updateFilterCategoryDropdown();
             updateScrollButtons(); renderMiniDashboard(); initVoiceInput();
+            // Show currency modal on first visit
+            if (!localStorage.getItem('currencyChosen')) { setTimeout(showCurrencyModal, 500); }
             document.getElementById('category').addEventListener('change', function() { updateQuickCategorySelection(this.value); });
             document.getElementById('currencyPreviewAmount').textContent = formatCurrency(1234.56);
         }
