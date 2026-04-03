@@ -17,8 +17,10 @@ export const metadata: Metadata = {
   title: "Kharcha Saathi",
   description: "Smart expense tracking for everyone",
   openGraph: {
+    url: "https://kharcha-saathi.vercel.app",
     title: "Kharcha Saathi",
     description: "Smart expense tracking for everyone",
+    siteName: "Kharcha Saathi",
     images: [
       {
         url: "/og-image.jpg",
