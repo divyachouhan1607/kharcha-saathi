@@ -2345,14 +2345,13 @@
         };
 
         let currentTab = 'expenses';
-        let tipsFirstVisit = !localStorage.getItem('tipsDismissed');
 
         function renderTip(tab, forceShow) {
             const container = document.getElementById('tip' + tab.charAt(0).toUpperCase() + tab.slice(1));
             if (!container) return;
 
             const dismissed = JSON.parse(localStorage.getItem('tipsDismissed') || '{}');
-            const show = forceShow || (!dismissed[tab] && tipsFirstVisit);
+            const show = forceShow || !dismissed[tab];
 
             if (!show) {
                 container.innerHTML = '';
