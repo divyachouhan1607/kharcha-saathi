@@ -7,19 +7,24 @@ export default async function DashboardPage() {
 
   return (
     <main className="flex min-h-screen flex-col">
-      <header className="border-b bg-white shadow-sm">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-2">
-          <div className="flex items-center gap-2">
+      <header className="bg-gradient-to-r from-[#D4603A] to-[#E8854A] shadow-md">
+        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-2.5">
+          <div className="flex items-center gap-2.5">
             {session.user?.image && (
               <img
                 src={session.user.image}
                 alt=""
-                className="h-7 w-7 rounded-full"
+                className="h-8 w-8 rounded-full border-2 border-white/40 shadow-sm"
               />
             )}
-            <span className="text-sm text-gray-700">
-              {session.user?.name}
-            </span>
+            <div className="flex flex-col">
+              <span className="text-sm font-semibold text-white leading-tight">
+                {session.user?.name}
+              </span>
+              <span className="text-[10px] text-white/60 leading-tight">
+                {session.user?.email}
+              </span>
+            </div>
           </div>
           <form
             action={async () => {
@@ -29,7 +34,7 @@ export default async function DashboardPage() {
           >
             <button
               type="submit"
-              className="rounded-lg bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-200"
+              className="rounded-full bg-white/15 border border-white/25 px-4 py-1.5 text-sm font-medium text-white transition-all hover:bg-white/25 active:scale-95"
             >
               Sign out
             </button>
