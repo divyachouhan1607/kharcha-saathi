@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://expense-manager-nextjs-zeta.vercel.app"),
+  metadataBase: new URL("https://kharcha-saathi.vercel.app"),
   title: "Kharcha Saathi",
   description: "Smart expense tracking for everyone",
   openGraph: {
