@@ -7,10 +7,10 @@ export default async function Home() {
   if (session) redirect("/dashboard");
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-[#FDF6F2] to-[#F5DDD0]">
+    <main className="min-h-screen bg-gradient-to-br from-[#FDF6F2] to-[#F5DDD0] overflow-x-hidden">
       {/* Nav */}
-      <nav className="flex items-center justify-between px-6 py-5 max-w-6xl mx-auto">
-        <div className="flex items-center gap-1.5">
+      <nav className="flex items-center justify-end sm:justify-between px-6 py-5 max-w-6xl mx-auto">
+        <div className="hidden sm:flex items-center gap-1.5">
           <span className="text-xl font-bold text-[#D4603A]">Kharcha</span>
           <Image src="/mascot.png" alt="" width={32} height={32} className="inline-block" />
           <span className="text-xl font-bold text-[#D4603A]">Saathi</span>
