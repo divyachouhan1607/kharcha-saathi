@@ -35,23 +35,25 @@ export default async function Home() {
         <div className="inline-block rounded-full bg-[#D4603A]/10 px-4 py-1.5 text-sm font-medium text-[#D4603A] mb-6">
           {"Free · Simple · Smart"}
         </div>
-        <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-gray-900 leading-tight tracking-tight">
-          Track Every
-          <span className="block text-[#D4603A]">Kharcha.</span>
+        <h1 className="flex items-center justify-center gap-2 text-6xl sm:text-7xl lg:text-8xl font-extrabold text-gray-900 leading-tight tracking-tight">
+          <span>
+            Kharcha<span className="text-[#D4603A]"> Saathi</span>
+          </span>
+          <Image
+            src="/mascot.png"
+            alt="Kharcha Saathi mascot"
+            width={120}
+            height={120}
+            className="drop-shadow-lg sm:w-[140px] sm:h-[140px] lg:w-[160px] lg:h-[160px]"
+            priority
+          />
         </h1>
-        <Image
-          src="/mascot.png"
-          alt="Kharcha Saathi mascot"
-          width={160}
-          height={160}
-          className="mx-auto mt-8 drop-shadow-lg"
-          priority
-        />
-        <p className="mt-4 text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+        <p className="mt-6 text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
           Track smarter! Spend better!
         </p>
-        <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+        <div className="mt-10">
           <form
+            className="flex justify-center"
             action={async () => {
               "use server";
               await signIn("google", { redirectTo: "/dashboard" });
@@ -70,7 +72,7 @@ export default async function Home() {
               Get Started with Google
             </button>
           </form>
-          <a href="#features" className="text-sm font-medium text-gray-500 hover:text-[#D4603A] transition-colors">
+          <a href="#features" className="mt-4 inline-block text-sm font-medium text-gray-500 hover:text-[#D4603A] transition-colors">
             {"Learn more ↓"}
           </a>
         </div>
