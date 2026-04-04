@@ -44,7 +44,7 @@ export default async function Home() {
             alt="Kharcha Saathi mascot"
             width={96}
             height={96}
-            className="-ml-2 drop-shadow-lg -scale-x-100 sm:w-[112px] sm:h-[112px] lg:w-[128px] lg:h-[128px]"
+            className="-ml-2 -mr-[94px] drop-shadow-lg -scale-x-100 sm:w-[112px] sm:h-[112px] sm:-mr-[110px] lg:w-[128px] lg:h-[128px] lg:-mr-[126px]"
             priority
           />
         </h1>
