@@ -10,9 +10,10 @@ export default async function Home() {
     <main className="min-h-screen bg-gradient-to-br from-[#FDF6F2] to-[#F5DDD0]">
       {/* Nav */}
       <nav className="flex items-center justify-between px-6 py-5 max-w-6xl mx-auto">
-        <div className="flex items-center gap-2">
-          <span className="text-2xl">{"💰"}</span>
-          <span className="text-xl font-bold text-[#D4603A]">Kharcha Saathi</span>
+        <div className="flex items-center gap-1.5">
+          <span className="text-xl font-bold text-[#D4603A]">Kharcha</span>
+          <Image src="/mascot.png" alt="" width={32} height={32} className="inline-block" />
+          <span className="text-xl font-bold text-[#D4603A]">Saathi</span>
         </div>
         <form
           action={async () => {
@@ -183,9 +184,10 @@ export default async function Home() {
 
       {/* Footer */}
       <footer className="px-6 py-8 max-w-6xl mx-auto text-center border-t border-[#D4603A]/10">
-        <div className="flex items-center justify-center gap-2 mb-2">
-          <span className="text-lg">{"💰"}</span>
-          <span className="font-bold text-[#D4603A]">Kharcha Saathi</span>
+        <div className="flex items-center justify-center gap-1 mb-2">
+          <span className="font-bold text-[#D4603A]">Kharcha</span>
+          <Image src="/mascot.png" alt="" width={24} height={24} className="inline-block" />
+          <span className="font-bold text-[#D4603A]">Saathi</span>
         </div>
         <p className="text-sm text-gray-400">
           {"Track smarter! Spend better! Made with ❤️ in India."}

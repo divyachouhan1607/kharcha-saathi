@@ -25,8 +25,10 @@ export default async function LoginPage() {
             className="mx-auto mb-2 drop-shadow-lg"
             priority
           />
-          <h1 className="text-3xl font-extrabold tracking-tight text-gray-900">
-            Kharcha Saathi
+          <h1 className="flex items-center justify-center gap-1.5 text-3xl font-extrabold tracking-tight text-gray-900">
+            Kharcha
+            <Image src="/mascot.png" alt="" width={36} height={36} className="inline-block" />
+            Saathi
           </h1>
           <p className="mt-1.5 text-sm text-gray-500">
             Track smarter! Spend better!
