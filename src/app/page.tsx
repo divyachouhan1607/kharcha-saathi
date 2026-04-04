@@ -35,16 +35,16 @@ export default async function Home() {
         <div className="inline-block rounded-full bg-[#D4603A]/10 px-4 py-1.5 text-sm font-medium text-[#D4603A] mb-6">
           {"Free · Simple · Smart"}
         </div>
-        <h1 className="flex items-center justify-center gap-0 text-5xl sm:text-6xl lg:text-7xl font-extrabold text-gray-900 leading-tight tracking-tight text-center">
+        <h1 className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-0 text-5xl sm:text-6xl lg:text-7xl font-extrabold text-gray-900 leading-tight tracking-tight text-center">
           <span>
             Kharcha<span className="text-[#D4603A]"> Saathi</span>
           </span>
           <Image
             src="/mascot.png"
             alt="Kharcha Saathi mascot"
-            width={96}
-            height={96}
-            className="-ml-2 -mr-[94px] drop-shadow-lg -scale-x-100 sm:w-[112px] sm:h-[112px] sm:-mr-[110px] lg:w-[128px] lg:h-[128px] lg:-mr-[126px]"
+            width={120}
+            height={120}
+            className="drop-shadow-lg -scale-x-100 sm:-ml-2 sm:-mr-[110px] sm:w-[112px] sm:h-[112px] lg:w-[128px] lg:h-[128px] lg:-mr-[126px]"
             priority
           />
         </h1>
