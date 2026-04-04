@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Kharcha Saathi</title>
     <link rel="icon" type="image/png" href="icon.png">
     <link rel="apple-touch-icon" href="icon.png">
@@ -274,6 +274,86 @@
             font-size: 20px;
             font-weight: bold;
             color: #D4603A;
+        }
+
+        .expense-hover-actions {
+            display: none;
+            align-items: center;
+            gap: 6px;
+            margin-left: 12px;
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+            .expense-item-wrapper:hover .expense-hover-actions {
+                display: flex;
+            }
+        }
+
+        .expense-hover-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.15s ease, opacity 0.15s ease;
+            opacity: 0.7;
+        }
+
+        .expense-hover-btn:hover { opacity: 1; transform: scale(1.1); }
+
+        .expense-hover-btn.edit-btn {
+            background: #e8f4fd;
+            color: #2196F3;
+        }
+
+        .expense-hover-btn.del-btn {
+            background: #fdecea;
+            color: #dc3545;
+        }
+
+        .expense-tap-actions {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.25s ease;
+            background: #f8f9fa;
+            border-radius: 0 0 10px 10px;
+            margin-top: -10px;
+            z-index: 0;
+        }
+
+        .expense-item-wrapper.expanded .expense-tap-actions {
+            max-height: 60px;
+        }
+
+        .expense-tap-actions-inner {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            padding: 14px 15px 10px;
+        }
+
+        .expense-tap-btn {
+            border: none;
+            border-radius: 8px;
+            padding: 6px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .expense-tap-btn.edit { background: #e8f4fd; color: #2196F3; }
+        .expense-tap-btn.delete { background: #fdecea; color: #dc3545; }
+
+        /* Hide tap actions on hover devices, show on touch */
+        @media (hover: hover) and (pointer: fine) {
+            .expense-tap-actions { display: none; }
         }
 
         .delete-btn {
@@ -947,14 +1027,14 @@
         /* ===== Mascot Popup ===== */
         .mascot-overlay {
             position: fixed;
-            bottom: 0;
             left: 0;
             right: 0;
+            bottom: max(20px, env(safe-area-inset-bottom, 20px));
             z-index: 999;
             display: flex;
             justify-content: center;
             pointer-events: none;
-            padding: 0 15px 20px;
+            padding: 0 15px;
         }
 
         .mascot-popup {
@@ -3126,6 +3206,35 @@
             });
         }
 
+        function editExpense(mk, id) {
+            const exp = (expenses[mk] || []).find(e => e.id === id);
+            if (!exp) return;
+            // Populate the form with existing values
+            document.getElementById('amount').value = exp.amount;
+            document.getElementById('category').value = exp.category;
+            updateQuickCategorySelection(exp.category);
+            document.getElementById('description').value = exp.description;
+            document.getElementById('date').value = exp.date;
+            // Scroll to form
+            document.getElementById('amount').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            document.getElementById('amount').focus();
+            // Delete the old expense silently
+            const idx = expenses[mk].findIndex(e => e.id === id);
+            const backup = { ...expenses[mk][idx] };
+            expenses[mk].splice(idx, 1);
+            if (expenses[mk].length === 0) delete expenses[mk];
+            saveData(); renderExpenses(); renderBudgets(); renderMonthlyAnalytics(); renderMiniDashboard();
+            showToast('Editing expense — submit the form to save, or', 'info', 8000, function() {
+                // Undo: restore original and clear form
+                if (!expenses[mk]) expenses[mk] = [];
+                expenses[mk].push(backup);
+                saveData(); renderExpenses(); renderBudgets(); renderMonthlyAnalytics(); renderMiniDashboard();
+                document.getElementById('expenseForm').reset(); setTodayDate();
+                document.querySelectorAll('.quick-cat-btn').forEach(b => b.classList.remove('selected'));
+                showToast('Edit cancelled, expense restored', 'success');
+            });
+        }
+
         function getDateLabel(dateStr) {
             const today = new Date(); today.setHours(0,0,0,0);
             const yesterday = new Date(today); yesterday.setDate(yesterday.getDate() - 1);
@@ -3203,6 +3312,16 @@
                                 <div class="expense-description">${e.description}</div>
                             </div>
                             <div class="expense-amount">${formatCurrency(e.amount)}</div>
+                            <div class="expense-hover-actions">
+                                <button class="expense-hover-btn edit-btn" onclick="editExpense('${mk}',${e.id})" title="Edit">✏️</button>
+                                <button class="expense-hover-btn del-btn" onclick="deleteExpense('${mk}',${e.id})" title="Delete">🗑️</button>
+                            </div>
+                        </div>
+                        <div class="expense-tap-actions">
+                            <div class="expense-tap-actions-inner">
+                                <button class="expense-tap-btn edit" onclick="editExpense('${mk}',${e.id})">✏️ Edit</button>
+                                <button class="expense-tap-btn delete" onclick="deleteExpense('${mk}',${e.id})">🗑️ Delete</button>
+                            </div>
                         </div>
                     </div>`;
                 });
@@ -3257,12 +3376,19 @@
                     item.style.transition = 'transform 0.25s ease';
 
                     if (!isDragging) {
-                        // It was a tap — close if open
+                        // It was a tap — close swipe if open
                         if (item.classList.contains('swiped')) {
                             item.classList.remove('swiped');
                             item.style.transform = '';
                             currentOpen = null;
+                            return;
                         }
+                        // Toggle tap-to-expand action bar
+                        const wrapper = item.closest('.expense-item-wrapper');
+                        const wasExpanded = wrapper.classList.contains('expanded');
+                        // Close any other expanded item
+                        document.querySelectorAll('.expense-item-wrapper.expanded').forEach(w => w.classList.remove('expanded'));
+                        if (!wasExpanded) wrapper.classList.add('expanded');
                         return;
                     }
 
@@ -3279,13 +3405,17 @@
                 }, { passive: true });
             });
 
-            // Close open item when tapping elsewhere
+            // Close open/expanded items when tapping elsewhere
             document.addEventListener('touchstart', function(e) {
                 if (currentOpen && !currentOpen.closest('.expense-item-wrapper').contains(e.target)) {
                     currentOpen.classList.remove('swiped');
                     currentOpen.style.transform = '';
                     currentOpen = null;
                 }
+                // Close expanded tap-action bars
+                document.querySelectorAll('.expense-item-wrapper.expanded').forEach(w => {
+                    if (!w.contains(e.target)) w.classList.remove('expanded');
+                });
             }, { passive: true });
         }
 

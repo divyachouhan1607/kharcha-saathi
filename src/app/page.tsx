@@ -1,5 +1,6 @@
 import { auth, signIn } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import Image from "next/image";
 
 export default async function Home() {
   const session = await auth();
@@ -37,7 +38,15 @@ export default async function Home() {
           Track Every
           <span className="block text-[#D4603A]">Kharcha.</span>
         </h1>
-        <p className="mt-6 text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+        <Image
+          src="/mascot.png"
+          alt="Kharcha Saathi mascot"
+          width={160}
+          height={160}
+          className="mx-auto mt-8 drop-shadow-lg"
+          priority
+        />
+        <p className="mt-4 text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
           Track smarter! Spend better!
         </p>
         <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -143,6 +152,13 @@ export default async function Home() {
       {/* CTA */}
       <section className="px-6 py-16 max-w-4xl mx-auto">
         <div className="rounded-2xl bg-gradient-to-r from-[#D4603A] to-[#E8854A] p-8 sm:p-12 text-white text-center">
+          <Image
+            src="/mascot.png"
+            alt=""
+            width={80}
+            height={80}
+            className="mx-auto mb-4 drop-shadow-md brightness-0 invert opacity-90"
+          />
           <h3 className="text-2xl sm:text-3xl font-extrabold mb-3">
             Start tracking in 10 seconds
           </h3>

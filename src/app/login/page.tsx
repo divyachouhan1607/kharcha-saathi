@@ -1,5 +1,6 @@
 import { auth, signIn } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import Image from "next/image";
 
 export default async function LoginPage() {
   const session = await auth();
@@ -16,9 +17,14 @@ export default async function LoginPage() {
       <div className="relative w-full max-w-sm">
         {/* Logo & branding */}
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-[#D4603A] to-[#E8854A] shadow-lg shadow-[#D4603A]/25">
-            <span className="text-4xl">{"💰"}</span>
-          </div>
+          <Image
+            src="/mascot.png"
+            alt="Kharcha Saathi mascot"
+            width={120}
+            height={120}
+            className="mx-auto mb-2 drop-shadow-lg"
+            priority
+          />
           <h1 className="text-3xl font-extrabold tracking-tight text-gray-900">
             Kharcha Saathi
           </h1>
