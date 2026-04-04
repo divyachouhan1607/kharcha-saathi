@@ -27,6 +27,11 @@ npx prisma migrate dev --name <name>  # Create migration
 npx prisma generate  # Regenerate client after schema change
 ```
 
+## Critical: File Locations
+
+- **Deployed app**: `public/expense-app.html` — This is the REAL app served on Vercel. It has the custom Kharcha Saathi banner, mascot, speedometer, desktop layout, recurring expenses, PWA features. ALL changes to the app go here.
+- **Submodule (LEGACY)**: `Expense Manager/index.html` — An outdated standalone copy. Do NOT use it as a source of truth. NEVER copy it over `expense-app.html`.
+
 ## Project Structure
 
 ```

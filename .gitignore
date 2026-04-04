@@ -41,3 +41,4 @@ prisma/*.db-journal
 .claude/settings.local.json
 
 .vercel
+Expense Manager/
