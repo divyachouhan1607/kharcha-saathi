@@ -1029,12 +1029,18 @@
             position: fixed;
             left: 0;
             right: 0;
-            bottom: max(20px, env(safe-area-inset-bottom, 20px));
             z-index: 999;
             display: flex;
             justify-content: center;
             pointer-events: none;
             padding: 0 15px;
+            bottom: max(20px, env(safe-area-inset-bottom, 20px));
+        }
+
+        @media (max-width: 767px) {
+            .mascot-overlay {
+                bottom: max(50px, calc(env(safe-area-inset-bottom, 20px) + 30px));
+            }
         }
 
         .mascot-popup {
