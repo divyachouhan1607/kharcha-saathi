@@ -29,7 +29,7 @@ export default async function LoginPage() {
             />
           </h1>
           <p className="mt-1.5 text-sm text-gray-500">
-            Track smarter! Spend better!
+            Your companion for smarter spending!
           </p>
         </div>
 

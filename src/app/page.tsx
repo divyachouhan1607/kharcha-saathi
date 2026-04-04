@@ -49,7 +49,7 @@ export default async function Home() {
           />
         </h1>
         <p className="mt-6 text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-          Track smarter! Spend better!
+          Your companion for smarter spending!
         </p>
         <div className="mt-10">
           <form
@@ -191,7 +191,7 @@ export default async function Home() {
           <Image src="/mascot.png" alt="" width={28} height={28} className="-ml-0.5 -scale-x-100" />
         </div>
         <p className="text-sm text-gray-400">
-          {"Track smarter! Spend better!"}
+          {"Your companion for smarter spending!"}
         </p>
         <p className="text-sm text-gray-400">
           {"Made with ❤️ in India."}
