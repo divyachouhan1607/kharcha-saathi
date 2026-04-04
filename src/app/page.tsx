@@ -35,7 +35,7 @@ export default async function Home() {
         <div className="inline-block rounded-full bg-[#D4603A]/10 px-4 py-1.5 text-sm font-medium text-[#D4603A] mb-6">
           {"Free · Simple · Smart"}
         </div>
-        <h1 className="flex items-center justify-center gap-2 text-5xl sm:text-6xl lg:text-7xl font-extrabold text-gray-900 leading-tight tracking-tight text-center">
+        <h1 className="flex items-center justify-center gap-0 text-5xl sm:text-6xl lg:text-7xl font-extrabold text-gray-900 leading-tight tracking-tight text-center">
           <span>
             Kharcha<span className="text-[#D4603A]"> Saathi</span>
           </span>
@@ -44,7 +44,7 @@ export default async function Home() {
             alt="Kharcha Saathi mascot"
             width={96}
             height={96}
-            className="drop-shadow-lg sm:w-[112px] sm:h-[112px] lg:w-[128px] lg:h-[128px]"
+            className="-ml-2 drop-shadow-lg -scale-x-100 sm:w-[112px] sm:h-[112px] lg:w-[128px] lg:h-[128px]"
             priority
           />
         </h1>
