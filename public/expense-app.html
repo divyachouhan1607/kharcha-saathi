@@ -40,17 +40,22 @@
         }
 
         .header {
-            background: linear-gradient(135deg, #D4603A 0%, #E8854A 100%);
+            background: url('banner.png') center/cover no-repeat;
             color: white;
-            padding: 30px 20px;
+            padding: 0;
             text-align: center;
+            position: relative;
+            min-height: 120px;
         }
 
         .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
+            display: none;
+        }
+
+        .header-banner-overlay {
+            position: absolute;
+            bottom: 10px;
+            right: 15px;
         }
 
         .header h1 { font-size: 28px; margin: 0; }
@@ -96,26 +101,29 @@
             justify-content: center;
             align-items: center;
             gap: 15px;
-            margin-top: 15px;
+            padding: 12px 20px;
+            background: white;
+            border-bottom: 1px solid #eee;
         }
 
         .month-selector button {
-            background: rgba(255,255,255,0.2);
-            border: none;
-            color: white;
+            background: #FDF6F2;
+            border: 1.5px solid #D4603A30;
+            color: #D4603A;
             padding: 8px 15px;
             border-radius: 8px;
             cursor: pointer;
             font-size: 16px;
         }
 
-        .month-selector button:active { background: rgba(255,255,255,0.3); }
+        .month-selector button:active { background: #D4603A15; }
 
         .month-display {
             font-size: 18px;
             font-weight: bold;
             min-width: 150px;
             text-align: center;
+            color: #333;
         }
 
         .tabs {
@@ -1582,6 +1590,9 @@
         }
 
         body.dark .tab-scroll-container { background: #161620; }
+        body.dark .month-selector { background: #161620; border-bottom-color: #2A1A10; }
+        body.dark .month-selector button { background: #1a1a2e; border-color: #2A1A10; color: #E8854A; }
+        body.dark .month-display { color: #F5E8D8; }
         body.dark .tabs { background: #161620; border-bottom-color: #2A1A10; }
 
         body.dark .tab { color: #887755; }
@@ -1734,8 +1745,7 @@
         /* ===== Desktop Responsive Enhancements ===== */
         @media (min-width: 768px) {
             .tab-content { padding: 30px 40px; }
-            .header { padding: 35px 40px; }
-            .header h1 { font-size: 32px; }
+            .header { min-height: 140px; }
 
             .mini-dashboard {
                 grid-template-columns: repeat(4, 1fr);
@@ -1772,7 +1782,7 @@
 
         @media (min-width: 1200px) {
             .tab-content { padding: 40px 60px; }
-            .header { padding: 40px 60px; }
+            .header { min-height: 160px; }
 
             .expense-list {
                 grid-template-columns: 1fr 1fr 1fr;
@@ -1803,18 +1813,17 @@
 
     <div class="container">
         <div class="header">
-            <div class="header-top">
-                <h1>💰 Kharcha Saathi</h1>
+            <div class="header-banner-overlay">
                 <div class="theme-pill" onclick="toggleTheme()" title="Toggle dark mode">
                     <div class="theme-pill-opt active" id="themeSunOpt">☀️</div>
                     <div class="theme-pill-opt" id="themeMoonOpt">🌙</div>
                 </div>
             </div>
-            <div class="month-selector">
-                <button onclick="changeMonth(-1)">◀</button>
-                <div class="month-display" id="monthDisplay"></div>
-                <button onclick="changeMonth(1)">▶</button>
-            </div>
+        </div>
+        <div class="month-selector">
+            <button onclick="changeMonth(-1)">◀</button>
+            <div class="month-display" id="monthDisplay"></div>
+            <button onclick="changeMonth(1)">▶</button>
         </div>
 
         <div class="tab-scroll-container">
