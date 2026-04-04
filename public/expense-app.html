@@ -215,6 +215,42 @@
 
         .expense-list { margin-top: 20px; }
 
+        .expense-list-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 10px;
+            margin-top: 15px;
+            border: 1.5px dashed #D4603A40;
+            border-radius: 10px;
+            background: #FDF6F2;
+            color: #D4603A;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .expense-list-toggle:hover {
+            background: #D4603A10;
+            border-color: #D4603A60;
+        }
+
+        .expense-list-toggle .toggle-arrow {
+            transition: transform 0.3s ease;
+            display: inline-block;
+        }
+
+        .expense-list-toggle.open .toggle-arrow {
+            transform: rotate(180deg);
+        }
+
+        .expense-list.collapsed {
+            display: none;
+        }
+
         .expense-item-wrapper {
             position: relative;
             overflow: hidden;
@@ -1891,6 +1927,10 @@
                 <div class="results-count" id="resultsCount"></div>
             </div>
 
+            <button class="expense-list-toggle open" id="expenseListToggle" onclick="toggleExpenseList()">
+                <span id="expenseToggleText">Hide Expenses</span>
+                <span class="toggle-arrow">▼</span>
+            </button>
             <div class="expense-list" id="expenseList"></div>
         </div>
 
@@ -3254,6 +3294,15 @@
             const dateFormatted = `${d.getDate()} ${monthNames[d.getMonth()]} ${d.getFullYear()}`;
             if (diff > 0 && diff < 7) return { main: dayName, sub: dateFormatted };
             return { main: dateFormatted, sub: dayName };
+        }
+
+        function toggleExpenseList() {
+            const list = document.getElementById('expenseList');
+            const btn = document.getElementById('expenseListToggle');
+            const text = document.getElementById('expenseToggleText');
+            const isCollapsed = list.classList.toggle('collapsed');
+            btn.classList.toggle('open', !isCollapsed);
+            text.textContent = isCollapsed ? 'Show Expenses' : 'Hide Expenses';
         }
 
         function renderExpenses() {
