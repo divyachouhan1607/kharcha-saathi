@@ -2007,55 +2007,66 @@
             right: 0;
             background: white;
             border-top: 1px solid #dee2e6;
-            padding: 12px 20px;
+            padding: 14px 16px;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            gap: 10px;
             z-index: 1000;
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 -4px 24px rgba(0,0,0,0.12);
             animation: slideUp 0.25s ease;
         }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        body.dark .multi-select-bar { background: #161620; border-top-color: #2A1A10; }
+        body.dark .multi-select-bar { background: #161620; border-top-color: #2A1A10; box-shadow: 0 -4px 24px rgba(0,0,0,0.4); }
 
         .multi-select-cancel {
-            width: 32px;
-            height: 32px;
+            width: 34px;
+            height: 34px;
             border-radius: 50%;
             border: none;
             background: #f0f0f0;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 700;
             color: #6c757d;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.15s;
         }
+        .multi-select-cancel:active { transform: scale(0.9); }
         body.dark .multi-select-cancel { background: #2A1A10; color: #E0BB8A; }
         .multi-select-info {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
+            flex: 1;
+            min-width: 0;
         }
         .multi-select-count {
             font-weight: 700;
             font-size: 14px;
             color: #1a1a1a;
+            white-space: nowrap;
         }
         body.dark .multi-select-count { color: #F5E8D8; }
         .multi-select-link {
-            font-size: 13px;
+            font-size: 12px;
             color: #D4603A;
             cursor: pointer;
             font-weight: 600;
             background: none;
             border: none;
-            padding: 0;
+            padding: 4px 8px;
+            border-radius: 6px;
+            white-space: nowrap;
+            transition: background 0.15s;
         }
+        .multi-select-link:active { background: rgba(212,96,58,0.1); }
         .multi-select-delete {
-            padding: 10px 20px;
-            border-radius: 10px;
+            padding: 12px 22px;
+            border-radius: 12px;
             border: none;
             background: #dc3545;
             color: white;
@@ -2063,9 +2074,12 @@
             font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
+            flex-shrink: 0;
+            white-space: nowrap;
         }
-        .multi-select-delete:hover { background: #c82333; }
-        .multi-select-delete:disabled { opacity: 0.4; cursor: not-allowed; }
+        .multi-select-delete:hover { background: #c82333; box-shadow: 0 4px 12px rgba(220,53,69,0.3); }
+        .multi-select-delete:active { transform: scale(0.96); }
+        .multi-select-delete:disabled { opacity: 0.35; cursor: not-allowed; transform: none; box-shadow: none; }
 
         .expense-item.selected-highlight {
             background: #FFF5F2;
@@ -3928,7 +3942,9 @@
         function updateSelectCount() {
             const n = selectedExpenses.size;
             document.getElementById('multiSelectCount').textContent = n + ' selected';
-            document.getElementById('multiDeleteBtn').disabled = n === 0;
+            const delBtn = document.getElementById('multiDeleteBtn');
+            delBtn.disabled = n === 0;
+            delBtn.textContent = n > 0 ? `🗑️ Delete ${n}` : '🗑️ Delete';
             const total = document.querySelectorAll('.expense-checkbox').length;
             document.getElementById('selectAllBtn').textContent = (n > 0 && n === total) ? 'Deselect All' : 'Select All';
         }
