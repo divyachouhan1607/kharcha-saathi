@@ -4561,26 +4561,48 @@
             // Custom rich legend
             const legendEl = document.getElementById('pieLegend');
             if (legendEl) {
-                const lgBg = isDark ? 'rgba(30,28,40,0.5)' : 'rgba(245,240,235,0.6)';
-                const lgBd = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
                 const lgTxt = isDark ? '#c0b8a8' : '#555';
                 const lgAmt = isDark ? '#F5E8D8' : '#333';
                 const lgPct = isDark ? '#887755' : '#999';
-                let lh = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px;">';
+                const barBg = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)';
+                const cardBg = isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)';
+                const maxVal = Math.max.apply(null, data.map(function(d){return d.value}));
+                const medals = ['🥇','🥈','🥉'];
+
+                let lh = '<div style="display:flex;flex-direction:column;gap:5px;margin-top:6px;">';
                 data.forEach(function(d, i) {
                     const pct = ((d.value / total) * 100).toFixed(1);
+                    const barPct = Math.round((d.value / maxVal) * 100);
                     const color = baseColors[i % baseColors.length];
                     const amt = sym + d.value.toLocaleString('en-IN', {maximumFractionDigits: 0});
-                    lh += '<div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:' + lgBg + ';border:1px solid ' + lgBd + ';border-radius:10px;cursor:pointer;transition:all .2s;" ' +
-                        'onmouseenter="this.style.transform=\'translateY(-1px)\';this.style.boxShadow=\'0 4px 12px rgba(0,0,0,0.1)\'" ' +
-                        'onmouseleave="this.style.transform=\'none\';this.style.boxShadow=\'none\'">' +
-                        '<div style="width:10px;height:10px;border-radius:50%;background:' + color + ';flex-shrink:0;box-shadow:0 0 6px ' + color + '60;"></div>' +
-                        '<div style="flex:1;min-width:0;overflow:hidden;">' +
-                            '<div style="font-size:11px;font-weight:600;color:' + lgTxt + ';white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + d.name + '</div>' +
+                    const medal = i < 3 ? medals[i] : '';
+                    const isTop = i === 0;
+                    const topBorder = isTop ? 'border:1.5px solid ' + color + '40;' : 'border:1px solid ' + (isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)') + ';';
+                    const topShadow = isTop ? 'box-shadow:0 2px 12px ' + color + '20;' : '';
+                    const bgTint = 'background:linear-gradient(90deg,' + color + (isDark ? '12' : '08') + ',' + cardBg + ');';
+
+                    lh += '<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;cursor:pointer;transition:all .25s;' + topBorder + topShadow + bgTint + '" ' +
+                        'onmouseenter="this.style.transform=\'translateX(4px)\';this.style.boxShadow=\'0 4px 16px ' + color + '25\'" ' +
+                        'onmouseleave="this.style.transform=\'none\';this.style.boxShadow=\'' + (isTop ? '0 2px 12px ' + color + '20' : 'none') + '\'">' +
+
+                        // Rank badge
+                        '<div style="width:28px;height:28px;border-radius:50%;background:' + color + (isDark ? '22' : '15') + ';display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:' + (medal ? '14px' : '11px') + ';font-weight:700;color:' + (medal ? color : lgPct) + ';">' + (medal || (i+1)) + '</div>' +
+
+                        // Name + bar
+                        '<div style="flex:1;min-width:0;">' +
+                            '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">' +
+                                '<span style="font-size:12px;font-weight:600;color:' + lgTxt + ';white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%;">' + d.name + '</span>' +
+                                '<span style="font-size:13px;font-weight:800;color:' + lgAmt + ';font-family:-apple-system,sans-serif;letter-spacing:-0.3px;">' + amt + '</span>' +
+                            '</div>' +
+                            // Progress bar
+                            '<div style="height:5px;background:' + barBg + ';border-radius:3px;overflow:hidden;">' +
+                                '<div style="height:100%;width:' + barPct + '%;background:linear-gradient(90deg,' + color + ',' + shadeColor(color, 20) + ');border-radius:3px;transition:width 0.8s ease;"></div>' +
+                            '</div>' +
                         '</div>' +
-                        '<div style="text-align:right;flex-shrink:0;">' +
-                            '<div style="font-size:12px;font-weight:700;color:' + lgAmt + ';font-family:\'Playfair Display\',serif;">' + amt + '</div>' +
-                            '<div style="font-size:9px;font-weight:600;color:' + lgPct + ';">' + pct + '%</div>' +
+
+                        // Percentage
+                        '<div style="min-width:38px;text-align:right;flex-shrink:0;">' +
+                            '<span style="font-size:12px;font-weight:700;color:' + color + ';">' + pct + '%</span>' +
                         '</div>' +
                     '</div>';
                 });
