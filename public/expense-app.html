@@ -1991,6 +1991,48 @@
 
         body.dark .modal-confirm-btn:disabled { background: #2A1A10 !important; color: #665544 !important; }
 
+        /* Burn Modal */
+        .burn-fire {
+            font-size: 56px;
+            margin-bottom: 10px;
+            animation: fireFlicker 1s ease-in-out infinite alternate;
+        }
+        @keyframes fireFlicker {
+            0% { transform: scale(1) rotate(-3deg); }
+            50% { transform: scale(1.1) rotate(3deg); }
+            100% { transform: scale(1) rotate(-3deg); }
+        }
+        .burn-cancel-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 12px;
+            border: 2px solid #dee2e6;
+            background: white;
+            font-size: 14px;
+            font-weight: 600;
+            color: #6c757d;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .burn-cancel-btn:active { transform: scale(0.96); }
+        .burn-confirm-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 12px;
+            border: none;
+            background: linear-gradient(135deg, #dc3545, #ff6b35);
+            font-size: 14px;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 15px rgba(220,53,69,0.3);
+        }
+        .burn-confirm-btn:hover { box-shadow: 0 6px 20px rgba(220,53,69,0.5); }
+        .burn-confirm-btn:active { transform: scale(0.96); }
+        body.dark .burn-cancel-btn { background: #2A1A10; border-color: #2A1A10; color: #E0BB8A; }
+        body.dark .burn-confirm-btn { box-shadow: 0 4px 15px rgba(220,53,69,0.4); }
+
         /* ===== Multi-Select Mode ===== */
 
         .expense-checkbox {
@@ -2620,7 +2662,20 @@
                 <strong>CSV:</strong> Excel-friendly expense list for analysis<br>
                 <strong>Google Sheets:</strong> Creates a spreadsheet in your Google Drive
             </div>
-            <button class="btn btn-secondary" onclick="clearAllData()" style="background: #dc3545; margin-top: 20px;">🗑️ Clear All Data</button>
+            <button class="btn btn-secondary" onclick="showBurnModal()" style="background: #dc3545; margin-top: 20px;">🗑️ Clear All Data</button>
+        </div>
+    </div>
+
+    <!-- Burn Confirmation Modal -->
+    <div class="modal-overlay" id="burnModal">
+        <div class="modal-box">
+            <div class="burn-fire">🔥</div>
+            <div class="modal-title">Burn all the records??</div>
+            <div class="modal-subtitle">Every expense, budget, and category — gone forever. No going back!!</div>
+            <div style="display:flex;gap:10px;margin-top:20px;">
+                <button class="burn-cancel-btn" onclick="closeBurnModal()">Nah, keep it</button>
+                <button class="burn-confirm-btn" onclick="confirmBurn()">Burn it 🔥</button>
+            </div>
         </div>
     </div>
 
@@ -4883,14 +4938,20 @@
             reader.readAsText(file); event.target.value = '';
         }
 
-        function clearAllData() {
-            if (confirm('🔥 Burn all the records?? No going back!!')) {
-                if (confirm('Every expense, budget, and category — gone forever. Still sure?')) {
-                    expenses = {}; budgets = {}; categories = [...defaultCategories];
-                    saveData(); updateCategoryDropdowns(); renderCategories(); renderQuickCategories(); updateFilterCategoryDropdown();
-                    renderExpenses(); renderBudgets(); renderMonthlyAnalytics(); renderMiniDashboard(); showToast('All data cleared!', 'success');
-                }
-            }
+        function showBurnModal() {
+            document.getElementById('burnModal').classList.add('visible');
+        }
+
+        function closeBurnModal() {
+            document.getElementById('burnModal').classList.remove('visible');
+        }
+
+        function confirmBurn() {
+            closeBurnModal();
+            expenses = {}; budgets = {}; categories = [...defaultCategories];
+            saveData(); updateCategoryDropdowns(); renderCategories(); renderQuickCategories(); updateFilterCategoryDropdown();
+            renderExpenses(); renderBudgets(); renderMonthlyAnalytics(); renderMiniDashboard();
+            showToast('All records burned! 🔥 Fresh start.', 'success');
         }
 
         init();
