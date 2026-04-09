@@ -196,11 +196,24 @@
         .form-group input,
         .form-group select {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #dee2e6;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s;
+            padding: 12px 14px;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.2s;
+            background: white;
+            color: #374151;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+
+        .form-group select:hover {
+            border-color: #D4603A;
         }
 
         .form-group input:focus,
@@ -712,31 +725,206 @@
         }
 
         /* ===== Quick-Add Category Buttons ===== */
-        .quick-categories {
+        .cat-scroll-row {
             display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-bottom: 10px;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 4px 2px 8px;
+            margin-bottom: 4px;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
         }
+        .cat-scroll-row::-webkit-scrollbar { display: none; }
 
-        .quick-cat-btn {
-            background: #FDF6F2;
-            border: 2px solid #E8CCBB;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 13px;
+        .cat-circle-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
             cursor: pointer;
+            border: none;
+            background: none;
+            padding: 4px;
+            min-width: 62px;
             transition: all 0.2s;
-            color: #495057;
-            font-weight: 500;
         }
 
-        .quick-cat-btn:active { transform: scale(0.95); }
+        .cat-circle-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            background: #f3f4f6;
+            border: 2px solid transparent;
+            transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+        }
 
-        .quick-cat-btn.selected {
-            background: linear-gradient(135deg, #D4603A 0%, #E8854A 100%);
-            color: white;
-            border-color: #D4603A;
+        .cat-circle-btn:active .cat-circle-icon { transform: scale(0.9); }
+
+        .cat-circle-label {
+            font-size: 11px;
+            color: #6b7280;
+            font-weight: 500;
+            max-width: 62px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            text-align: center;
+        }
+
+        .cat-circle-btn.selected .cat-circle-icon {
+            background: linear-gradient(135deg, #D4603A, #E8854A);
+            border-color: transparent;
+            box-shadow: 0 4px 14px rgba(212,96,58,0.35);
+            transform: scale(1.08);
+        }
+        .cat-circle-btn.selected .cat-circle-label {
+            color: #D4603A;
+            font-weight: 700;
+        }
+
+        .cat-more-btn .cat-circle-icon {
+            background: linear-gradient(135deg, #f9fafb, #f3f4f6);
+            border: 2px dashed #d1d5db;
+            font-size: 18px;
+            color: #9ca3af;
+        }
+
+        /* Selected category display */
+        .selected-cat-display {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #fff7ed, #ffedd5);
+            border: 1.5px solid #fed7aa;
+            font-size: 14px;
+            font-weight: 600;
+            color: #D4603A;
+        }
+        .selected-cat-clear {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #D4603A;
+            cursor: pointer;
+            padding: 0 4px;
+            line-height: 1;
+        }
+
+        /* Bottom sheet */
+        .cat-bottom-sheet-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 10000;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            animation: fadeIn 0.2s ease;
+        }
+        .cat-bottom-sheet {
+            background: white;
+            border-radius: 24px 24px 0 0;
+            width: 100%;
+            max-width: 500px;
+            max-height: 70vh;
+            padding: 16px 20px 24px;
+            animation: sheetSlideUp 0.35s cubic-bezier(0.34,1.56,0.64,1);
+            overflow-y: auto;
+        }
+        .cat-sheet-handle {
+            width: 40px;
+            height: 4px;
+            background: #d1d5db;
+            border-radius: 4px;
+            margin: 0 auto 16px;
+        }
+        .cat-sheet-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+        .cat-sheet-subtitle {
+            font-size: 13px;
+            color: #9ca3af;
+            margin-bottom: 16px;
+        }
+        .cat-sheet-search {
+            width: 100%;
+            padding: 10px 14px 10px 36px;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 14px;
+            margin-bottom: 16px;
+            background: #f9fafb url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E") no-repeat 12px center;
+            transition: border-color 0.2s;
+        }
+        .cat-sheet-search:focus { outline: none; border-color: #D4603A; }
+        .cat-sheet-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+        .cat-sheet-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            padding: 12px 4px;
+            border-radius: 14px;
+            cursor: pointer;
+            border: none;
+            background: #f9fafb;
+            transition: all 0.2s;
+        }
+        .cat-sheet-item:active { transform: scale(0.95); }
+        .cat-sheet-item:hover { background: #fff7ed; }
+        .cat-sheet-item .cat-sheet-emoji {
+            font-size: 28px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+        }
+        .cat-sheet-item .cat-sheet-name {
+            font-size: 11px;
+            font-weight: 500;
+            color: #374151;
+            text-align: center;
+            max-width: 72px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .cat-sheet-item.selected {
+            background: linear-gradient(135deg, #D4603A, #E8854A);
+        }
+        .cat-sheet-item.selected .cat-sheet-name { color: white; font-weight: 700; }
+        .cat-sheet-add {
+            border: 2px dashed #d1d5db;
+            background: transparent;
+        }
+        .cat-sheet-add:hover { border-color: #D4603A; }
+        .cat-sheet-add .cat-sheet-emoji { color: #9ca3af; }
+        .cat-sheet-add .cat-sheet-name { color: #9ca3af; }
+
+        @keyframes sheetSlideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+        @keyframes catShake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-6px); }
+            40% { transform: translateX(6px); }
+            60% { transform: translateX(-4px); }
+            80% { transform: translateX(4px); }
         }
 
         /* ===== Recurring Expenses ===== */
@@ -1282,6 +1470,10 @@
             from { opacity: 0; }
             to { opacity: 1; }
         }
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.8) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
 
         .modal-box {
             background: white;
@@ -1717,8 +1909,23 @@
         body.dark .voice-hint { color: #887755; }
         body.dark .voice-status { color: #E8854A; }
 
-        body.dark .quick-cat-btn { background: #161620; border-color: #2A1A10; color: #E0BB8A; }
-        body.dark .quick-cat-btn.selected { background: linear-gradient(135deg, #D4603A 0%, #E8854A 100%); color: white; border-color: #D4603A; }
+        body.dark .cat-circle-icon { background: #1e1e2e; box-shadow: 0 2px 6px rgba(0,0,0,0.3); }
+        body.dark .cat-circle-label { color: #998877; }
+        body.dark .cat-circle-btn.selected .cat-circle-icon { background: linear-gradient(135deg, #D4603A, #E8854A); box-shadow: 0 4px 14px rgba(212,96,58,0.4); }
+        body.dark .cat-circle-btn.selected .cat-circle-label { color: #E8854A; }
+        body.dark .cat-more-btn .cat-circle-icon { background: #161620; border-color: #333; }
+        body.dark .selected-cat-display { background: linear-gradient(135deg, #2a1f14, #1e1510); border-color: #3a2510; color: #E8854A; }
+        body.dark .selected-cat-clear { color: #E8854A; }
+        body.dark .cat-bottom-sheet { background: #1a1a2e; }
+        body.dark .cat-sheet-handle { background: #333; }
+        body.dark .cat-sheet-title { color: #f5e8d8; }
+        body.dark .cat-sheet-subtitle { color: #665544; }
+        body.dark .cat-sheet-search { background-color: #161620; border-color: #2a2a3e; color: #f5e8d8; }
+        body.dark .cat-sheet-item { background: #161620; }
+        body.dark .cat-sheet-item:hover { background: #2a1f14; }
+        body.dark .cat-sheet-item .cat-sheet-name { color: #e0bb8a; }
+        body.dark .cat-sheet-item.selected .cat-sheet-name { color: white; }
+        body.dark .cat-sheet-add { border-color: #333; background: transparent; }
 
         body.dark .search-bar input { background: #161620; border-color: #2A1A10; color: #F5E8D8; }
         body.dark .search-bar input::placeholder { color: #665544; }
@@ -1843,8 +2050,10 @@
             .form-group input,
             .form-group select { padding: 14px; }
 
-            .quick-categories { gap: 8px; }
-            .quick-cat-btn { padding: 8px 16px; font-size: 14px; }
+            .cat-scroll-row { gap: 12px; }
+            .cat-circle-icon { width: 56px; height: 56px; font-size: 26px; border-radius: 18px; }
+            .cat-circle-label { font-size: 12px; max-width: 72px; }
+            .cat-sheet-grid { grid-template-columns: repeat(5, 1fr); }
 
             .search-bar input { padding: 12px 16px; }
 
@@ -1865,6 +2074,7 @@
             .file-buttons { max-width: 400px; }
         }
     </style>
+<script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
 </head>
 <body>
     <div class="toast-container" id="toastContainer"></div>
@@ -1914,7 +2124,7 @@
         <div id="expenses" class="tab-content active">
             <!-- Speedometer (visible only when budgets are set) -->
             <div class="speedometer-card" id="speedometerCard">
-                <svg class="speedometer-svg" viewBox="0 0 260 160" id="speedoSvg"></svg>
+                <svg class="speedometer-svg" viewBox="0 0 260 175" id="speedoSvg"></svg>
                 <div class="speedo-bottom">
                     <div class="speedo-stat">
                         <div class="speedo-stat-label">Per Day</div>
@@ -1950,6 +2160,11 @@
             </div>
             <div class="voice-status" id="voiceStatus"></div>
 
+            <div style="margin-bottom:16px;">
+                <h3 style="font-size:18px;font-weight:700;color:#1a1a1a;margin:0 0 2px;">Spent something?</h3>
+                <p style="font-size:13px;color:#9ca3af;margin:0;">Tell us before you forget (again).</p>
+            </div>
+
             <form onsubmit="addExpense(event)">
                 <div class="form-group">
                     <label>Amount</label>
@@ -1958,10 +2173,14 @@
 
                 <div class="form-group">
                     <label>Category</label>
-                    <div class="quick-categories" id="quickCategories"></div>
-                    <select id="category" required>
+                    <div class="cat-scroll-row" id="quickCategories"></div>
+                    <select id="category" style="display:none;">
                         <option value="">Select category</option>
                     </select>
+                    <div id="selectedCategoryDisplay" class="selected-cat-display" style="display:none;">
+                        <span id="selectedCatText"></span>
+                        <button type="button" onclick="clearCategorySelection()" class="selected-cat-clear">&times;</button>
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -2185,8 +2404,14 @@
                     <input type="text" id="newCategoryName" required placeholder="e.g., Travel, Education">
                 </div>
                 <div class="form-group">
-                    <label>Emoji (optional)</label>
-                    <input type="text" id="newCategoryEmoji" maxlength="2" placeholder="✈️">
+                    <label>Pick an Emoji</label>
+                    <input type="hidden" id="newCategoryEmoji" value="">
+                    <div id="emojiPickerGrid" style="display:grid;grid-template-columns:repeat(8,1fr);gap:6px;margin-top:6px;"></div>
+                    <div style="margin-top:8px;display:flex;align-items:center;gap:8px;">
+                        <span style="font-size:12px;color:#9ca3af;">Selected:</span>
+                        <span id="selectedEmojiPreview" style="font-size:22px;">📌</span>
+                        <button type="button" onclick="clearEmojiSelection()" style="font-size:11px;color:#D4603A;background:none;border:none;cursor:pointer;text-decoration:underline;">Reset</button>
+                    </div>
                 </div>
                 <button type="submit" class="btn btn-primary">Add Category</button>
             </form>
@@ -2209,7 +2434,10 @@
             <div class="tip-container" id="tipData"></div>
             <div class="file-buttons">
                 <button class="btn btn-primary" onclick="exportData()">📥 Export JSON</button>
-                <button class="btn btn-primary" onclick="exportCSV()">📊 Export CSV</button>
+                <button class="btn btn-primary" onclick="exportXLSX()">📊 Export Excel</button>
+            </div>
+            <div class="file-buttons">
+                <button class="btn btn-primary" onclick="exportToGoogleSheets()" id="btnGoogleSheets" style="background: #0F9D58;">📗 Export to Google Sheets</button>
             </div>
             <div class="file-buttons">
                 <button class="btn btn-secondary" onclick="document.getElementById('fileInput').click()">📤 Import Data</button>
@@ -2217,7 +2445,8 @@
             <input type="file" id="fileInput" accept=".json" onchange="importData(event)">
             <div class="info-text">
                 <strong>JSON:</strong> Complete backup (expenses, budgets, categories)<br>
-                <strong>CSV:</strong> Excel-friendly expense list for analysis
+                <strong>CSV:</strong> Excel-friendly expense list for analysis<br>
+                <strong>Google Sheets:</strong> Creates a spreadsheet in your Google Drive
             </div>
             <button class="btn btn-secondary" onclick="clearAllData()" style="background: #dc3545; margin-top: 20px;">🗑️ Clear All Data</button>
         </div>
@@ -2296,14 +2525,18 @@
         };
 
         const defaultCategories = [
-            { name: 'Food', emoji: '🍔', isDefault: true },
-            { name: 'Travel', emoji: '🚗', isDefault: true },
-            { name: 'Shopping', emoji: '🛍️', isDefault: true },
-            { name: 'Entertainment', emoji: '🎬', isDefault: true },
             { name: 'Bills', emoji: '📄', isDefault: true },
+            { name: 'Entertainment', emoji: '🎬', isDefault: true },
+            { name: 'Food', emoji: '🍔', isDefault: true },
             { name: 'Health', emoji: '🏥', isDefault: true },
-            { name: 'Other', emoji: '📦', isDefault: true }
+            { name: 'Other', emoji: '📦', isDefault: true },
+            { name: 'Shopping', emoji: '🛍️', isDefault: true },
+            { name: 'Travel', emoji: '🚗', isDefault: true }
         ];
+
+        function sortCategories() {
+            categories.sort((a, b) => a.name.localeCompare(b.name));
+        }
 
         const currencyLocales = {
             'INR': 'en-IN', 'USD': 'en-US', 'EUR': 'de-DE', 'GBP': 'en-GB', 'JPY': 'ja-JP', 'CNY': 'zh-CN',
@@ -2437,7 +2670,7 @@
             if (desc) desc = desc.charAt(0).toUpperCase() + desc.slice(1);
 
             if (amount) document.getElementById('amount').value = amount;
-            if (matched) { document.getElementById('category').value = matched; updateQuickCategorySelection(matched); }
+            if (matched) { document.getElementById('category').value = matched; updateQuickCategorySelection(matched); showSelectedCategory(categories.find(c => c.name === matched)); }
             if (desc) document.getElementById('description').value = desc;
 
             if (!amount) document.getElementById('amount').focus();
@@ -2447,36 +2680,106 @@
 
         // ===== QUICK CATEGORIES =====
         function renderQuickCategories() {
-            // Count usage across all months
             const usage = {};
             Object.values(expenses).forEach(function(me) {
                 me.forEach(function(e) { usage[e.category] = (usage[e.category] || 0) + 1; });
             });
 
             let topCats;
-            if (Object.keys(usage).length >= 3) {
-                // Show top 3 most used
-                topCats = Object.entries(usage).sort((a, b) => b[1] - a[1]).slice(0, 3)
+            if (Object.keys(usage).length >= 5) {
+                topCats = Object.entries(usage).sort((a, b) => b[1] - a[1]).slice(0, 6)
                     .map(function(entry) { return categories.find(function(c) { return c.name === entry[0]; }); })
                     .filter(Boolean);
             } else {
-                // New user — show first 3 defaults
-                topCats = categories.slice(0, 3);
+                topCats = categories.slice(0, 6);
             }
 
-            document.getElementById('quickCategories').innerHTML = topCats.map(cat =>
-                `<button type="button" class="quick-cat-btn" data-category="${cat.name}" onclick="selectQuickCategory('${cat.name}')">${cat.emoji} ${cat.name}</button>`
-            ).join('');
+            const row = document.getElementById('quickCategories');
+            row.innerHTML = topCats.map(cat =>
+                `<button type="button" class="cat-circle-btn" data-category="${cat.name}" onclick="selectQuickCategory('${cat.name}')">
+                    <div class="cat-circle-icon">${cat.emoji}</div>
+                    <span class="cat-circle-label">${cat.name}</span>
+                </button>`
+            ).join('') +
+            `<button type="button" class="cat-circle-btn cat-more-btn" onclick="openCategorySheet()">
+                <div class="cat-circle-icon">···</div>
+                <span class="cat-circle-label">More</span>
+            </button>`;
         }
 
         function selectQuickCategory(name) {
             document.getElementById('category').value = name;
+            const cat = categories.find(c => c.name === name);
             updateQuickCategorySelection(name);
+            showSelectedCategory(cat);
         }
 
         function updateQuickCategorySelection(name) {
-            document.querySelectorAll('.quick-cat-btn').forEach(btn => {
+            document.querySelectorAll('.cat-circle-btn').forEach(btn => {
                 btn.classList.toggle('selected', btn.dataset.category === name);
+            });
+        }
+
+        function showSelectedCategory(cat) {
+            if (!cat) return;
+            const display = document.getElementById('selectedCategoryDisplay');
+            document.getElementById('selectedCatText').textContent = cat.emoji + '  ' + cat.name;
+            display.style.display = 'flex';
+        }
+
+        function clearCategorySelection() {
+            document.getElementById('category').value = '';
+            document.getElementById('selectedCategoryDisplay').style.display = 'none';
+            document.querySelectorAll('.cat-circle-btn').forEach(b => b.classList.remove('selected'));
+        }
+
+        function openCategorySheet() {
+            let overlay = document.getElementById('catSheetOverlay');
+            if (overlay) overlay.remove();
+            const isDark = document.body.classList.contains('dark');
+            overlay = document.createElement('div');
+            overlay.id = 'catSheetOverlay';
+            overlay.className = 'cat-bottom-sheet-overlay';
+
+            const currentVal = document.getElementById('category').value;
+            const catItems = categories.map(cat =>
+                `<button type="button" class="cat-sheet-item${cat.name === currentVal ? ' selected' : ''}" data-name="${cat.name}" onclick="selectFromSheet('${cat.name.replace(/'/g, "\\'")}')">
+                    <span class="cat-sheet-emoji">${cat.emoji}</span>
+                    <span class="cat-sheet-name">${cat.name}</span>
+                </button>`
+            ).join('');
+
+            overlay.innerHTML = `<div class="cat-bottom-sheet">
+                <div class="cat-sheet-handle"></div>
+                <div class="cat-sheet-title">Choose Category</div>
+                <div class="cat-sheet-subtitle">${categories.length} categories available</div>
+                <input type="text" class="cat-sheet-search" placeholder="Search categories..." oninput="filterSheetCategories(this.value)">
+                <div class="cat-sheet-grid" id="catSheetGrid">
+                    ${catItems}
+                    <button type="button" class="cat-sheet-item cat-sheet-add" onclick="document.getElementById('catSheetOverlay').remove();switchTab('settings');setTimeout(function(){document.getElementById('newCategoryName').focus();document.getElementById('newCategoryName').scrollIntoView({behavior:'smooth',block:'center'});},100);">
+                        <span class="cat-sheet-emoji">➕</span>
+                        <span class="cat-sheet-name">Add New</span>
+                    </button>
+                </div>
+            </div>`;
+
+            document.body.appendChild(overlay);
+            overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
+        }
+
+        function selectFromSheet(name) {
+            document.getElementById('category').value = name;
+            const cat = categories.find(c => c.name === name);
+            updateQuickCategorySelection(name);
+            showSelectedCategory(cat);
+            document.getElementById('catSheetOverlay').remove();
+        }
+
+        function filterSheetCategories(query) {
+            const q = query.toLowerCase();
+            document.querySelectorAll('#catSheetGrid .cat-sheet-item').forEach(item => {
+                const name = (item.dataset.name || '').toLowerCase();
+                item.style.display = (!q || name.includes(q) || item.classList.contains('cat-sheet-add')) ? '' : 'none';
             });
         }
 
@@ -2592,6 +2895,9 @@
                 html += `<text x="${cx}" y="${cy - 30}" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="9" font-weight="600" letter-spacing="1.5">${label}</text>`;
                 html += `<text x="${cx}" y="${cy - 5}" text-anchor="middle" fill="${amountColor}" font-size="26" font-weight="800">${amount}</text>`;
                 html += `<text x="${cx}" y="${cy + 15}" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-size="10">${spentText}</text>`;
+
+                // Kharcha-Meter title (placed just above the arc)
+                html += `<text x="${cx}" y="${cy - r - 8}" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="700" letter-spacing="3" font-family="sans-serif">KHARCHA-METER</text>`;
 
                 // Zone labels
                 html += `<text x="35" y="${cy + 15}" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-size="8">0%</text>`;
@@ -3037,19 +3343,6 @@
             if (!localStorage.getItem('currencyChosen')) { setTimeout(showCurrencyModal, 500); }
             renderAllTips();
             document.getElementById('category').addEventListener('change', function() {
-                if (this.value === '__add_new__') {
-                    this.value = '';
-                    // Switch to settings tab and focus new category input
-                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                    document.querySelectorAll('.tab')[5].classList.add('active'); // Settings tab
-                    document.getElementById('settings').classList.add('active');
-                    setTimeout(function() {
-                        document.getElementById('newCategoryName').focus();
-                        document.getElementById('newCategoryName').scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }, 100);
-                    return;
-                }
                 updateQuickCategorySelection(this.value);
             });
             document.getElementById('currencyPreviewAmount').textContent = formatCurrency(1234.56);
@@ -3076,6 +3369,7 @@
             if (sb) budgets = JSON.parse(sb);
             if (sc) categories = JSON.parse(sc);
             else { categories = [...defaultCategories]; }
+            sortCategories();
             if (su) { currentCurrency = su; document.getElementById('currencySelect').value = currentCurrency; }
 
             // Load from server (overrides localStorage if data exists)
@@ -3085,7 +3379,7 @@
                     if (res.data) {
                         if (res.data.expenses) expenses = res.data.expenses;
                         if (res.data.budgets) budgets = res.data.budgets;
-                        if (res.data.categories) categories = res.data.categories;
+                        if (res.data.categories) { categories = res.data.categories; sortCategories(); }
                         if (res.data.currency) {
                             currentCurrency = res.data.currency;
                             document.getElementById('currencySelect').value = currentCurrency;
@@ -3137,8 +3431,7 @@
 
         function updateCategoryDropdowns() {
             const opts = categories.map(c => `<option value="${c.name}">${c.emoji} ${c.name}</option>`).join('');
-            const addNew = '<option value="__add_new__">➕ Add new category...</option>';
-            document.getElementById('category').innerHTML = '<option value="">Select category</option>' + opts + addNew;
+            document.getElementById('category').innerHTML = '<option value="">Select category</option>' + opts;
             document.getElementById('budgetCategory').innerHTML = '<option value="">Select category</option>' + opts;
         }
 
@@ -3267,13 +3560,77 @@
             div.appendChild(canvas);
         }
 
+        const emojiOptions = [
+            '🍔','🍕','🍜','☕','🥗','🍰',
+            '🚗','✈️','🚌','⛽','🚕','🏍️',
+            '🛍️','👕','👟','💄','🎁','💎',
+            '🎬','🎮','🎵','📺','🎭','🏋️',
+            '📄','💡','📱','🏠','💧','📡',
+            '🏥','💊','🩺','🧘','🦷','👓',
+            '📚','🎓','💻','✏️','📖','🧪',
+            '🐶','🐱','👶','💇','🧹','📦'
+        ];
+
+        function initEmojiPicker() {
+            const grid = document.getElementById('emojiPickerGrid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            emojiOptions.forEach(em => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.textContent = em;
+                btn.style.cssText = 'font-size:22px;width:40px;height:40px;border-radius:10px;border:2px solid transparent;background:' + (document.body.classList.contains('dark') ? '#2a2a3e' : '#f9fafb') + ';cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;';
+                btn.onclick = function() {
+                    grid.querySelectorAll('button').forEach(b => { b.style.border = '2px solid transparent'; b.style.background = document.body.classList.contains('dark') ? '#2a2a3e' : '#f9fafb'; });
+                    btn.style.border = '2px solid #D4603A';
+                    btn.style.background = document.body.classList.contains('dark') ? '#3a2510' : '#fff7ed';
+                    document.getElementById('newCategoryEmoji').value = em;
+                    document.getElementById('selectedEmojiPreview').textContent = em;
+                };
+                grid.appendChild(btn);
+            });
+        }
+
+        function clearEmojiSelection() {
+            document.getElementById('newCategoryEmoji').value = '';
+            document.getElementById('selectedEmojiPreview').textContent = '📌';
+            const grid = document.getElementById('emojiPickerGrid');
+            if (grid) grid.querySelectorAll('button').forEach(b => { b.style.border = '2px solid transparent'; b.style.background = document.body.classList.contains('dark') ? '#2a2a3e' : '#f9fafb'; });
+        }
+
+        // Initialize emoji picker on load
+        setTimeout(initEmojiPicker, 100);
+
         function addCategory(event) {
             event.preventDefault();
             const name = document.getElementById('newCategoryName').value.trim();
             const emoji = document.getElementById('newCategoryEmoji').value.trim() || '📌';
             if (categories.some(c => c.name.toLowerCase() === name.toLowerCase())) { showToast('Category already exists!', 'warning'); return; }
             categories.push({ name, emoji, isDefault: false });
-            saveData(); updateCategoryDropdowns(); renderCategories(); renderQuickCategories(); updateFilterCategoryDropdown(); event.target.reset();
+            sortCategories();
+            saveData(); updateCategoryDropdowns(); renderCategories(); renderQuickCategories(); updateFilterCategoryDropdown(); event.target.reset(); clearEmojiSelection();
+            // Show success popup with options
+            let overlay = document.getElementById('category-added-overlay');
+            if (overlay) overlay.remove();
+            const isDark = document.body.classList.contains('dark');
+            overlay = document.createElement('div');
+            overlay.id = 'category-added-overlay';
+            overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:10000;backdrop-filter:blur(6px);animation:fadeIn 0.25s ease;';
+            overlay.innerHTML = '<div style="background:' + (isDark ? '#1a1a2e' : 'white') + ';border-radius:24px;padding:36px 28px 28px;max-width:340px;width:90%;text-align:center;box-shadow:0 24px 80px rgba(0,0,0,0.35);animation:popIn 0.35s cubic-bezier(0.34,1.56,0.64,1);">' +
+                '<div style="position:relative;width:80px;height:80px;margin:0 auto 16px;">' +
+                    '<div style="width:80px;height:80px;border-radius:50%;background:' + (isDark ? 'linear-gradient(135deg,#2d1f0f,#3a2510)' : 'linear-gradient(135deg,#fff7ed,#ffedd5)') + ';display:flex;align-items:center;justify-content:center;font-size:40px;animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1) 0.1s both;">' + emoji + '</div>' +
+                    '<div style="position:absolute;bottom:-2px;right:-2px;width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#22c55e,#16a34a);display:flex;align-items:center;justify-content:center;animation:popIn 0.3s cubic-bezier(0.34,1.56,0.64,1) 0.3s both;border:3px solid ' + (isDark ? '#1a1a2e' : 'white') + ';">' +
+                        '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' +
+                    '</div>' +
+                '</div>' +
+                '<div style="font-size:22px;font-weight:800;color:' + (isDark ? '#f5e8d8' : '#1a1a1a') + ';margin-bottom:4px;">Category Added!</div>' +
+                '<div style="font-size:14px;color:' + (isDark ? '#998877' : '#9ca3af') + ';margin-bottom:28px;">' + emoji + ' <strong style="color:' + (isDark ? '#e8c4a0' : '#D4603A') + ';">' + name + '</strong> is ready to use</div>' +
+                '<div style="display:flex;flex-direction:column;gap:10px;">' +
+                '<button onclick="document.getElementById(\'category-added-overlay\').remove();switchTab(\'expenses\');" style="padding:14px 20px;border-radius:14px;border:none;background:linear-gradient(135deg,#D4603A,#E8854A);color:white;font-weight:700;font-size:15px;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 15px rgba(212,96,58,0.3);" onmouseover="this.style.transform=\'translateY(-1px)\';this.style.boxShadow=\'0 6px 20px rgba(212,96,58,0.4)\'" onmouseout="this.style.transform=\'translateY(0)\';this.style.boxShadow=\'0 4px 15px rgba(212,96,58,0.3)\'">Go to Expenses →</button>' +
+                '<button onclick="document.getElementById(\'category-added-overlay\').remove();document.getElementById(\'newCategoryName\').focus();" style="padding:14px 20px;border-radius:14px;border:none;background:' + (isDark ? '#2a2a3e' : '#f5f5f5') + ';color:' + (isDark ? '#e8c4a0' : '#555') + ';font-weight:600;font-size:15px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background=\'' + (isDark ? '#333348' : '#eee') + '\'" onmouseout="this.style.background=\'' + (isDark ? '#2a2a3e' : '#f5f5f5') + '\'">+ Add More Categories</button>' +
+                '</div></div>';
+            document.body.appendChild(overlay);
+            overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
         }
 
         function editCategory(index) {
@@ -3336,11 +3693,18 @@
             const category = document.getElementById('category').value;
             const description = document.getElementById('description').value;
             const date = document.getElementById('date').value;
+            if (!category) {
+                const row = document.getElementById('quickCategories');
+                row.style.animation = 'none'; row.offsetHeight; row.style.animation = 'catShake 0.4s ease';
+                row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
             const mk = date.substring(0, 7);
             if (!expenses[mk]) expenses[mk] = [];
             expenses[mk].push({ id: Date.now(), amount, category, description, date });
             saveData(); event.target.reset(); setTodayDate();
-            document.querySelectorAll('.quick-cat-btn').forEach(b => b.classList.remove('selected'));
+            clearCategorySelection();
+            document.querySelectorAll('.cat-circle-btn').forEach(b => b.classList.remove('selected'));
             renderExpenses(); renderBudgets(); renderMonthlyAnalytics(); renderMiniDashboard();
             const remark = getExpenseRemark(category, amount);
             showMascot(remark, `${formatCurrency(amount)} added to ${category}`);
@@ -3371,6 +3735,7 @@
             document.getElementById('amount').value = exp.amount;
             document.getElementById('category').value = exp.category;
             updateQuickCategorySelection(exp.category);
+            showSelectedCategory(categories.find(c => c.name === exp.category));
             document.getElementById('description').value = exp.description;
             document.getElementById('date').value = exp.date;
             // Scroll to form
@@ -3388,7 +3753,8 @@
                 expenses[mk].push(backup);
                 saveData(); renderExpenses(); renderBudgets(); renderMonthlyAnalytics(); renderMiniDashboard();
                 document.getElementById('expenseForm').reset(); setTodayDate();
-                document.querySelectorAll('.quick-cat-btn').forEach(b => b.classList.remove('selected'));
+                clearCategorySelection();
+                document.querySelectorAll('.cat-circle-btn').forEach(b => b.classList.remove('selected'));
                 showToast('Edit cancelled, expense restored', 'success');
             });
         }
@@ -3937,23 +4303,241 @@
         }
 
         function exportData() {
-            const data = { expenses, budgets, categories, exportDate: new Date().toISOString() };
+            const monthKeys = Object.keys(expenses).sort().reverse();
+            const monthlySummary = {};
+            const categoryTotals = {};
+            let grandTotal = 0;
+            let totalCount = 0;
+            monthKeys.forEach(mk => {
+                const monthExps = expenses[mk] || [];
+                const monthTotal = monthExps.reduce((s, e) => s + e.amount, 0);
+                const date = new Date(mk.split('-')[0], mk.split('-')[1] - 1);
+                const monthName = date.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
+                monthlySummary[monthName] = { total: monthTotal, count: monthExps.length };
+                grandTotal += monthTotal;
+                totalCount += monthExps.length;
+                monthExps.forEach(e => { categoryTotals[e.category] = (categoryTotals[e.category] || 0) + e.amount; });
+            });
+            const data = {
+                appName: 'Kharcha Saathi',
+                exportDate: new Date().toISOString(),
+                currency: currentCurrency,
+                summary: { totalExpenses: totalCount, grandTotal, monthlySummary, categoryBreakdown: categoryTotals },
+                expenses, budgets, categories
+            };
             const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
-            const a = document.createElement('a'); a.href = url; a.download = `expense-tracker-${new Date().toISOString().split('T')[0]}.json`; a.click();
+            const a = document.createElement('a'); a.href = url; a.download = `kharcha-saathi-${new Date().toISOString().split('T')[0]}.json`; a.click();
             URL.revokeObjectURL(url);
+            showToast(`Exported ${totalCount} expenses to JSON!`, 'success');
         }
 
-        function exportCSV() {
-            const all = []; Object.keys(expenses).sort().forEach(mk => { expenses[mk].forEach(e => all.push(e)); });
+        function exportToGoogleSheets() {
+            const all = []; Object.keys(expenses).forEach(mk => { expenses[mk].forEach(e => all.push(e)); });
             if (all.length === 0) { showToast('No expenses to export!', 'warning'); return; }
-            all.sort((a, b) => new Date(b.date) - new Date(a.date));
-            let csv = 'Date,Category,Description,Amount\n';
-            all.forEach(e => { csv += `${new Date(e.date).toLocaleDateString('en-IN')},${e.category},"${e.description.replace(/"/g, '""')}",${e.amount}\n`; });
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a'); a.href = url; a.download = `expenses-${new Date().toISOString().split('T')[0]}.csv`; a.click();
-            URL.revokeObjectURL(url); showToast(`Exported ${all.length} expenses to CSV!`, 'success');
+            const btn = document.getElementById('btnGoogleSheets');
+            btn.disabled = true; btn.textContent = '⏳ Creating spreadsheet...';
+            fetch('/api/export-sheets', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ expenses, currency: currentCurrency })
+            })
+            .then(r => r.json())
+            .then(res => {
+                if (res.error === 'NEEDS_AUTH') {
+                    showToast('Redirecting to grant Google Sheets permission...', 'info');
+                    setTimeout(() => { window.top.location.href = '/api/sheets-auth'; }, 1000);
+                    return;
+                }
+                if (res.error) { showToast(res.message || res.error, 'error'); return; }
+                showToast(`Exported ${res.count} expenses to Google Sheets!`, 'success');
+                window.open(res.url, '_blank');
+            })
+            .catch(() => showToast('Failed to export. Are you signed in?', 'error'))
+            .finally(() => { btn.disabled = false; btn.textContent = '📗 Export to Google Sheets'; });
+        }
+
+        function exportXLSX() {
+            const monthKeys = Object.keys(expenses).sort().reverse();
+            let totalCount = 0;
+            monthKeys.forEach(mk => { totalCount += (expenses[mk] || []).length; });
+            if (totalCount === 0) { showToast('No expenses to export!', 'warning'); return; }
+
+            // Style helpers
+            const border4 = { top: { style: 'thin' }, bottom: { style: 'thin' }, left: { style: 'thin' }, right: { style: 'thin' } };
+            const borderThick = { top: { style: 'medium' }, bottom: { style: 'medium' }, left: { style: 'medium' }, right: { style: 'medium' } };
+            const orangeHeader = { font: { bold: true, color: { rgb: 'FFFFFF' }, sz: 11 }, fill: { fgColor: { rgb: 'D4603A' } }, alignment: { horizontal: 'center', vertical: 'center' }, border: border4 };
+            const dataCell = { border: border4, alignment: { vertical: 'center' } };
+            const dataCellAlt = { border: border4, alignment: { vertical: 'center' }, fill: { fgColor: { rgb: 'FDF6F2' } } };
+            const totalCell = { font: { bold: true, sz: 11 }, fill: { fgColor: { rgb: 'F0F0F0' } }, border: borderThick, alignment: { vertical: 'center' } };
+            const titleStyle = { font: { bold: true, sz: 18, color: { rgb: 'FFFFFF' } }, fill: { fgColor: { rgb: 'D4603A' } }, alignment: { horizontal: 'center', vertical: 'center' } };
+            const catHeaderStyle = { font: { bold: true, color: { rgb: 'D4603A' }, sz: 10 }, border: border4, fill: { fgColor: { rgb: 'FDF6F2' } }, alignment: { horizontal: 'center' } };
+            const linkStyle = { font: { bold: true, color: { rgb: 'D4603A' }, sz: 11, underline: true }, alignment: { horizontal: 'left', vertical: 'center' }, border: border4, fill: { fgColor: { rgb: 'FFFFFF' } } };
+            const backLinkStyle = { font: { bold: true, color: { rgb: 'FFFFFF' }, sz: 11, underline: true }, fill: { fgColor: { rgb: 'D4603A' } }, alignment: { horizontal: 'center', vertical: 'center' }, border: border4 };
+
+            function styleCell(ws, r, c, style) {
+                const addr = XLSX.utils.encode_cell({ r, c });
+                if (!ws[addr]) ws[addr] = { v: '', t: 's' };
+                ws[addr].s = style;
+            }
+
+            function styleRange(ws, r, cols, style) {
+                for (let c = 0; c < cols; c++) styleCell(ws, r, c, style);
+            }
+
+            function addLink(ws, r, c, label, sheetName, style) {
+                const addr = XLSX.utils.encode_cell({ r, c });
+                ws[addr] = { v: label, t: 's', l: { Target: '#\'' + sheetName + '\'!A1' }, s: style };
+            }
+
+            const wb = XLSX.utils.book_new();
+            let grandTotal = 0;
+            const summaryData = [];
+            const categoryTotals = {};
+
+            // First pass: collect month names (newest first, matching monthKeys order)
+            const monthNames = [];
+            monthKeys.forEach(mk => {
+                const monthExps = expenses[mk] || [];
+                if (monthExps.length === 0) return;
+                const date = new Date(mk.split('-')[0], mk.split('-')[1] - 1);
+                monthNames.push(date.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' }));
+            });
+            // Chronological order (oldest first)
+            const monthNamesChron = [...monthNames].reverse();
+
+            // Create a sheet for each month
+            monthKeys.forEach(mk => {
+                const monthExps = [...(expenses[mk] || [])].sort((a, b) => new Date(b.date) - new Date(a.date));
+                if (monthExps.length === 0) return;
+                const date = new Date(mk.split('-')[0], mk.split('-')[1] - 1);
+                const monthName = date.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
+                const monthTotal = monthExps.reduce((s, e) => s + e.amount, 0);
+                grandTotal += monthTotal;
+                summaryData.push({ month: monthName, count: monthExps.length, total: monthTotal });
+
+                const monthCats = {};
+                monthExps.forEach(e => {
+                    categoryTotals[e.category] = (categoryTotals[e.category] || 0) + e.amount;
+                    monthCats[e.category] = (monthCats[e.category] || 0) + e.amount;
+                });
+
+                // Row 0: "< Back to Summary" link (merged across all columns)
+                // Row 1: merged title with month name
+                // Row 2: blank
+                // Row 3: column headers
+                // Row 4+: data
+                const rows = [['< Back to Summary', '', '', ''],
+                    [monthName, '', '', ''], [],
+                    ['Date', 'Category', 'Description', `Amount (${currentCurrency})`]];
+                monthExps.forEach(e => rows.push([
+                    new Date(e.date).toLocaleDateString('en-IN'), e.category, e.description, e.amount
+                ]));
+                rows.push([]);
+                rows.push(['', '', 'TOTAL', monthTotal]);
+                rows.push([]);
+                rows.push(['', 'Category', '', `Amount (${currentCurrency})`]);
+                Object.entries(monthCats).sort((a, b) => b[1] - a[1]).forEach(([cat, amt]) => rows.push(['', cat, '', amt]));
+
+                const ws = XLSX.utils.aoa_to_sheet(rows);
+                ws['!cols'] = [{ wch: 14 }, { wch: 18 }, { wch: 32 }, { wch: 18 }];
+                ws['!rows'] = [{ hpt: 30 }, { hpt: 36 }];
+
+                // Back to Summary link (row 0, merged)
+                ws['!merges'] = [
+                    { s: { r: 0, c: 0 }, e: { r: 0, c: 3 } },
+                    { s: { r: 1, c: 0 }, e: { r: 1, c: 3 } }
+                ];
+                addLink(ws, 0, 0, '< Back to Summary', 'Summary', backLinkStyle);
+                styleRange(ws, 0, 4, backLinkStyle);
+                ws[XLSX.utils.encode_cell({ r: 0, c: 0 })].l = { Target: '#\'Summary\'!A1' };
+
+                // Title row (row 1)
+                styleRange(ws, 1, 4, titleStyle);
+
+                // Column headers (row 3)
+                styleRange(ws, 3, 4, orangeHeader);
+
+                // Data rows with alternating colors + borders
+                for (let i = 0; i < monthExps.length; i++) {
+                    const style = i % 2 === 0 ? dataCell : dataCellAlt;
+                    styleRange(ws, 4 + i, 4, style);
+                }
+
+                // Total row with thick borders
+                const totalRowIdx = 4 + monthExps.length + 1;
+                styleRange(ws, totalRowIdx, 4, totalCell);
+
+                // Category header
+                const catHdrRow = totalRowIdx + 2;
+                styleRange(ws, catHdrRow, 4, catHeaderStyle);
+
+                // Category data rows with borders
+                const catEntries = Object.entries(monthCats).sort((a, b) => b[1] - a[1]);
+                for (let i = 0; i < catEntries.length; i++) {
+                    styleRange(ws, catHdrRow + 1 + i, 4, dataCell);
+                }
+
+                const sheetName = monthName.length > 31 ? monthName.substring(0, 31) : monthName;
+                XLSX.utils.book_append_sheet(wb, ws, sheetName);
+            });
+
+            // Build summary sheet
+            // Row 0: merged "Kharcha Saathi" title
+            // Row 1: blank
+            // Row 2: "Quick Navigation" label (merged)
+            // Row 3: column sub-headers (Month, Expenses, Total)
+            // Row 4+N: month rows with hyperlinked month names
+            // Last: GRAND TOTAL
+            const sumRows = [['Kharcha Saathi', '', ''], [],
+                ['Quick Navigation', '', ''],
+                ['Month', 'Expenses', `Total (${currentCurrency})`]];
+            // Use chronological summaryData (oldest first)
+            const summaryChron = [...summaryData].reverse();
+            summaryChron.forEach(s => sumRows.push([s.month, s.count, s.total]));
+            sumRows.push(['GRAND TOTAL', totalCount, grandTotal]);
+
+            const sumWs = XLSX.utils.aoa_to_sheet(sumRows);
+            sumWs['!cols'] = [{ wch: 24 }, { wch: 14 }, { wch: 20 }];
+            sumWs['!rows'] = [{ hpt: 42 }];
+
+            // Merge title row (row 0)
+            sumWs['!merges'] = [
+                { s: { r: 0, c: 0 }, e: { r: 0, c: 2 } },
+                { s: { r: 2, c: 0 }, e: { r: 2, c: 2 } }
+            ];
+            styleRange(sumWs, 0, 3, { font: { bold: true, sz: 20, color: { rgb: 'FFFFFF' } }, fill: { fgColor: { rgb: 'D4603A' } }, alignment: { horizontal: 'center', vertical: 'center' } });
+
+            // "Quick Navigation" label (row 2, merged)
+            styleRange(sumWs, 2, 3, { font: { bold: true, sz: 13, color: { rgb: 'D4603A' } }, fill: { fgColor: { rgb: 'FDF6F2' } }, border: border4, alignment: { horizontal: 'center', vertical: 'center' } });
+
+            // Sub-headers (row 3)
+            styleRange(sumWs, 3, 3, orangeHeader);
+
+            // Month data rows with hyperlinked month names
+            for (let i = 0; i < summaryChron.length; i++) {
+                const r = 4 + i;
+                const mn = summaryChron[i].month;
+                const sn = mn.length > 31 ? mn.substring(0, 31) : mn;
+                const style = i % 2 === 0 ? dataCell : dataCellAlt;
+                // Hyperlink on month name
+                addLink(sumWs, r, 0, mn, sn, { ...linkStyle, fill: style.fill || { fgColor: { rgb: 'FFFFFF' } }, border: border4 });
+                styleCell(sumWs, r, 1, style);
+                styleCell(sumWs, r, 2, style);
+            }
+
+            // Grand total row with thick borders
+            const gtRow = 4 + summaryChron.length;
+            styleRange(sumWs, gtRow, 3, totalCell);
+
+
+            // Add Summary as first sheet
+            XLSX.utils.book_append_sheet(wb, sumWs, 'Summary');
+            const sheetNames = wb.SheetNames;
+            sheetNames.unshift(sheetNames.pop());
+
+            XLSX.writeFile(wb, `kharcha-saathi-${new Date().toISOString().split('T')[0]}.xlsx`);
+            showToast(`Exported ${totalCount} expenses to Excel!`, 'success');
         }
 
         function importData(event) {
