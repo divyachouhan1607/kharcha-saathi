@@ -1972,27 +1972,6 @@
         body.dark .modal-confirm-btn:disabled { background: #2A1A10 !important; color: #665544 !important; }
 
         /* ===== Multi-Select Mode ===== */
-        .select-toggle-btn {
-            margin-top: 8px;
-            width: 100%;
-            padding: 8px 10px;
-            border-radius: 8px;
-            border: 1.5px solid #dee2e6;
-            background: white;
-            font-size: 12px;
-            font-weight: 600;
-            color: #6c757d;
-            cursor: pointer;
-            transition: all 0.2s;
-            white-space: nowrap;
-        }
-        .select-toggle-btn.active {
-            background: #D4603A;
-            border-color: #D4603A;
-            color: white;
-        }
-        body.dark .select-toggle-btn { background: #161620; border-color: #2A1A10; color: #887755; }
-        body.dark .select-toggle-btn.active { background: #D4603A; border-color: #D4603A; color: white; }
 
         .expense-checkbox {
             width: 20px;
@@ -2039,6 +2018,21 @@
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
         body.dark .multi-select-bar { background: #161620; border-top-color: #2A1A10; }
 
+        .multi-select-cancel {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: #f0f0f0;
+            font-size: 16px;
+            font-weight: 700;
+            color: #6c757d;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        body.dark .multi-select-cancel { background: #2A1A10; color: #E0BB8A; }
         .multi-select-info {
             display: flex;
             align-items: center;
@@ -2367,12 +2361,12 @@
                 <span class="toggle-arrow">▼</span>
             </button>
             <div class="expense-list collapsed" id="expenseList"></div>
-            <button class="select-toggle-btn" id="selectToggleBtn" onclick="toggleSelectMode()" style="display:none;">Select</button>
 
             <div class="multi-select-bar" id="multiSelectBar" style="display:none;">
+                <button class="multi-select-cancel" onclick="exitSelectMode()">✕</button>
                 <div class="multi-select-info">
                     <span class="multi-select-count" id="multiSelectCount">0 selected</span>
-                    <button class="multi-select-link" onclick="toggleSelectAll();" id="selectAllBtn">Select All</button>
+                    <button class="multi-select-link" onclick="toggleSelectAll();" id="selectAllBtn">All</button>
                 </div>
                 <button class="multi-select-delete" id="multiDeleteBtn" onclick="deleteSelected()" disabled>🗑️ Delete</button>
             </div>
@@ -3905,13 +3899,21 @@
         let selectMode = false;
         const selectedExpenses = new Set();
 
-        function toggleSelectMode() {
-            selectMode = !selectMode;
+        function enterSelectMode(firstKey) {
+            if (selectMode) return;
+            selectMode = true;
             selectedExpenses.clear();
-            document.getElementById('selectToggleBtn').classList.toggle('active', selectMode);
-            document.getElementById('selectToggleBtn').textContent = selectMode ? 'Cancel' : 'Select';
-            document.getElementById('multiSelectBar').style.display = selectMode ? 'flex' : 'none';
+            if (firstKey) selectedExpenses.add(firstKey);
+            document.getElementById('multiSelectBar').style.display = 'flex';
             updateSelectCount();
+            renderExpenses();
+            if (navigator.vibrate) navigator.vibrate(30);
+        }
+
+        function exitSelectMode() {
+            selectMode = false;
+            selectedExpenses.clear();
+            document.getElementById('multiSelectBar').style.display = 'none';
             renderExpenses();
         }
 
@@ -4021,14 +4023,6 @@
             return { main: dateFormatted, sub: dayName };
         }
 
-        function updateSelectBtnVisibility(count) {
-            const list = document.getElementById('expenseList');
-            const selectBtn = document.getElementById('selectToggleBtn');
-            const isExpanded = !list.classList.contains('collapsed');
-            selectBtn.style.display = (isExpanded && count > 0) ? 'block' : 'none';
-            if (!isExpanded && selectMode) toggleSelectMode();
-        }
-
         function toggleExpenseList() {
             const list = document.getElementById('expenseList');
             const btn = document.getElementById('expenseListToggle');
@@ -4036,8 +4030,7 @@
             const isCollapsed = list.classList.toggle('collapsed');
             btn.classList.toggle('open', !isCollapsed);
             text.textContent = isCollapsed ? 'Show Expenses' : 'Hide Expenses';
-            const mk = getMonthKey();
-            updateSelectBtnVisibility((expenses[mk] || []).length);
+            if (isCollapsed && selectMode) exitSelectMode();
         }
 
         function renderExpenses() {
@@ -4052,8 +4045,6 @@
             const rc = document.getElementById('resultsCount');
             rc.textContent = hasFilters() ? `Showing ${filtered.length} of ${me.length} expenses` : '';
 
-            // Show/hide Select button — only when expenses are visible
-            updateSelectBtnVisibility(me.length);
 
             if (filtered.length === 0) {
                 if (hasFilters()) {
@@ -4101,7 +4092,7 @@
                     const isChecked = selectedExpenses.has(eKey);
                     html += `<div class="expense-item-wrapper">
                         ${selectMode ? '' : `<div class="expense-delete-bg" onclick="deleteExpense('${mk}',${e.id})">🗑️</div>`}
-                        <div class="expense-item${isChecked ? ' selected-highlight' : ''}" data-expense-id="${e.id}" ${selectMode ? `onclick="toggleExpenseSelect('${mk}',${e.id},this.querySelector('.expense-checkbox'))"` : ''}>
+                        <div class="expense-item${isChecked ? ' selected-highlight' : ''}" data-expense-id="${e.id}" data-mk="${mk}" ${selectMode ? `onclick="toggleExpenseSelect('${mk}',${e.id},this.querySelector('.expense-checkbox'))"` : ''}>
                             ${selectMode ? `<div class="expense-checkbox${isChecked ? ' checked' : ''}" data-key="${eKey}"></div>` : ''}
                             <div class="expense-info">
                                 <div class="expense-category">${e.category}</div>
@@ -4129,39 +4120,52 @@
             if (!selectMode) initSwipeToDelete();
         }
 
-        // Swipe-to-delete touch handling
+        // Swipe-to-delete + long-press-to-select touch handling
         function initSwipeToDelete() {
             const items = document.querySelectorAll('.expense-item');
             let currentOpen = null;
 
             items.forEach(item => {
-                let startX = 0, currentX = 0, isDragging = false;
+                let startX = 0, startY = 0, currentX = 0, isDragging = false;
+                let longPressTimer = null, didLongPress = false;
 
                 item.addEventListener('touchstart', function(e) {
-                    // Close any other open item
                     if (currentOpen && currentOpen !== item) {
                         currentOpen.classList.remove('swiped');
                         currentOpen.style.transform = '';
                         currentOpen = null;
                     }
                     startX = e.touches[0].clientX;
+                    startY = e.touches[0].clientY;
                     isDragging = false;
+                    didLongPress = false;
                     item.style.transition = 'none';
+
+                    // Long press detection
+                    longPressTimer = setTimeout(() => {
+                        didLongPress = true;
+                        const mk = item.dataset.mk;
+                        const id = item.dataset.expenseId;
+                        if (mk && id) enterSelectMode(mk + ':' + id);
+                    }, 500);
                 }, { passive: true });
 
                 item.addEventListener('touchmove', function(e) {
                     const x = e.touches[0].clientX;
+                    const y = e.touches[0].clientY;
                     const diff = x - startX;
 
-                    // Only track horizontal swipes
+                    // Cancel long press if finger moves
+                    if (Math.abs(diff) > 8 || Math.abs(y - startY) > 8) {
+                        clearTimeout(longPressTimer);
+                    }
+
                     if (Math.abs(diff) > 10) isDragging = true;
 
                     if (isDragging) {
                         if (item.classList.contains('swiped')) {
-                            // Already open — allow closing (swipe right) or stay
                             currentX = Math.min(0, Math.max(-80, diff - 80));
                         } else {
-                            // Closed — allow opening (swipe left)
                             currentX = Math.min(0, Math.max(-80, diff));
                         }
                         item.style.transform = `translateX(${currentX}px)`;
@@ -4169,26 +4173,25 @@
                 }, { passive: true });
 
                 item.addEventListener('touchend', function() {
+                    clearTimeout(longPressTimer);
                     item.style.transition = 'transform 0.25s ease';
 
+                    if (didLongPress) return;
+
                     if (!isDragging) {
-                        // It was a tap — close swipe if open
                         if (item.classList.contains('swiped')) {
                             item.classList.remove('swiped');
                             item.style.transform = '';
                             currentOpen = null;
                             return;
                         }
-                        // Toggle tap-to-expand action bar
                         const wrapper = item.closest('.expense-item-wrapper');
                         const wasExpanded = wrapper.classList.contains('expanded');
-                        // Close any other expanded item
                         document.querySelectorAll('.expense-item-wrapper.expanded').forEach(w => w.classList.remove('expanded'));
                         if (!wasExpanded) wrapper.classList.add('expanded');
                         return;
                     }
 
-                    // Determine if we should open or close
                     if (currentX < -40) {
                         item.classList.add('swiped');
                         item.style.transform = 'translateX(-80px)';
@@ -4199,6 +4202,16 @@
                         if (currentOpen === item) currentOpen = null;
                     }
                 }, { passive: true });
+            });
+
+            // Desktop: right-click to enter select mode
+            items.forEach(item => {
+                item.addEventListener('contextmenu', function(e) {
+                    e.preventDefault();
+                    const mk = item.dataset.mk;
+                    const id = item.dataset.expenseId;
+                    if (mk && id) enterSelectMode(mk + ':' + id);
+                });
             });
 
             // Close open/expanded items when tapping elsewhere
