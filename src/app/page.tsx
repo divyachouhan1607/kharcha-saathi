@@ -3,7 +3,12 @@ import { redirect } from "next/navigation";
 import Image from "next/image";
 
 export default async function Home() {
-  const session = await auth();
+  let session = null;
+  try {
+    session = await auth();
+  } catch {
+    // DB may be waking up (cold start) — show landing page anyway
+  }
   if (session) redirect("/dashboard");
 
   return (
@@ -196,6 +201,9 @@ export default async function Home() {
         <p className="text-sm text-gray-400">
           {"Made with ❤️ in India."}
         </p>
+        <a href="/privacy" className="text-xs text-gray-400 hover:text-[#D4603A] underline mt-2 inline-block">
+          Privacy Policy
+        </a>
       </footer>
     </main>
   );
