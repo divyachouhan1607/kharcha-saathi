@@ -2570,13 +2570,19 @@
                     <input type="text" id="newCategoryName" required placeholder="e.g., Travel, Education">
                 </div>
                 <div class="form-group">
-                    <label>Pick an Emoji</label>
+                    <label onclick="toggleEmojiPicker()" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;">
+                        <span>Pick an Emoji</span>
+                        <span style="display:flex;align-items:center;gap:6px;">
+                            <span id="selectedEmojiPreview" style="font-size:20px;">📌</span>
+                            <span id="emojiPickerArrow" style="font-size:12px;transition:transform 0.25s;">▼</span>
+                        </span>
+                    </label>
                     <input type="hidden" id="newCategoryEmoji" value="">
-                    <div id="emojiPickerGrid" style="display:grid;grid-template-columns:repeat(8,1fr);gap:6px;margin-top:6px;"></div>
-                    <div style="margin-top:8px;display:flex;align-items:center;gap:8px;">
-                        <span style="font-size:12px;color:#9ca3af;">Selected:</span>
-                        <span id="selectedEmojiPreview" style="font-size:22px;">📌</span>
-                        <button type="button" onclick="clearEmojiSelection()" style="font-size:11px;color:#D4603A;background:none;border:none;cursor:pointer;text-decoration:underline;">Reset</button>
+                    <div id="emojiPickerCollapsible" style="max-height:0;overflow:hidden;transition:max-height 0.3s ease;">
+                        <div id="emojiPickerGrid" style="display:grid;grid-template-columns:repeat(8,1fr);gap:6px;margin-top:8px;"></div>
+                        <div style="margin-top:8px;display:flex;align-items:center;gap:8px;">
+                            <button type="button" onclick="clearEmojiSelection()" style="font-size:11px;color:#D4603A;background:none;border:none;cursor:pointer;text-decoration:underline;">Reset</button>
+                        </div>
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary">Add Category</button>
@@ -3788,6 +3794,14 @@
                 };
                 grid.appendChild(btn);
             });
+        }
+
+        function toggleEmojiPicker() {
+            const el = document.getElementById('emojiPickerCollapsible');
+            const arrow = document.getElementById('emojiPickerArrow');
+            const isOpen = el.style.maxHeight && el.style.maxHeight !== '0px';
+            el.style.maxHeight = isOpen ? '0px' : '300px';
+            arrow.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
         }
 
         function clearEmojiSelection() {
