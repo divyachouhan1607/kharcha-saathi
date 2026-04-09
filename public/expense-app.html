@@ -4467,17 +4467,20 @@
                 title: {
                     text: sym + total.toLocaleString('en-IN', {maximumFractionDigits: 0}),
                     subtext: 'Total Spent',
-                    left: 'center', top: 'center',
+                    left: 'center', top: '38%',
                     textStyle: {
-                        fontSize: 22, fontWeight: 700,
+                        fontSize: 20, fontWeight: 700,
                         color: isDark ? '#F5E8D8' : '#333',
-                        fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
+                        fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                        lineHeight: 24
                     },
                     subtextStyle: {
-                        fontSize: 12, fontWeight: 500,
-                        color: isDark ? '#887755' : '#999',
-                        fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
-                    }
+                        fontSize: 13, fontWeight: 600,
+                        color: isDark ? '#aa9975' : '#777',
+                        fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                        lineHeight: 20
+                    },
+                    itemGap: 4
                 },
                 tooltip: {
                     trigger: 'item',
@@ -4511,7 +4514,7 @@
                     name: 'Expenses',
                     type: 'pie',
                     roseType: 'area',
-                    radius: ['28%', '65%'],
+                    radius: ['35%', '65%'],
                     center: ['50%', '45%'],
                     avoidLabelOverlap: true,
                     itemStyle: {
