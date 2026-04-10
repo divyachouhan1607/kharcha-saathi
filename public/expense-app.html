@@ -3830,12 +3830,24 @@
                     label: {
                         show: true,
                         position: 'top',
-                        formatter: function(p) { return p.value > 0 ? abbreviateAmount(p.value, sym) : ''; },
-                        fontSize: 10,
-                        fontWeight: 700,
-                        fontFamily: '-apple-system,sans-serif',
-                        color: isDark ? '#c0b8a8' : '#666',
-                        distance: 6
+                        formatter: function(p) { return p.value > 0 ? '{bg|' + abbreviateAmount(p.value, sym) + '}' : ''; },
+                        rich: {
+                            bg: {
+                                backgroundColor: isDark ? 'rgba(30,28,40,0.85)' : 'rgba(255,255,255,0.92)',
+                                borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)',
+                                borderWidth: 1,
+                                borderRadius: 10,
+                                padding: [4, 8, 3, 8],
+                                fontSize: 10,
+                                fontWeight: 700,
+                                fontFamily: '-apple-system,sans-serif',
+                                color: isDark ? '#F5E8D8' : '#D4603A',
+                                shadowBlur: 6,
+                                shadowColor: 'rgba(0,0,0,0.1)',
+                                shadowOffsetY: 2
+                            }
+                        },
+                        distance: 10
                     },
                     animationDelay: function(idx) { return idx * 60; },
                     animationEasing: 'elasticOut'
