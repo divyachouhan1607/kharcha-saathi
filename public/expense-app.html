@@ -3727,7 +3727,8 @@
             const el = document.getElementById('yearlyChart');
             if (_yearlyChartInstance) { _yearlyChartInstance.dispose(); _yearlyChartInstance = null; }
 
-            const mn = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+            const elW = el.clientWidth || 400;
+            const mn = elW < 500 ? ['J','F','M','A','M','J','J','A','S','O','N','D'] : ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
             const mt = []; let max = 0;
             for (let m = 1; m <= 12; m++) {
                 const mk = `${analyticsYear}-${String(m).padStart(2, '0')}`;
@@ -3780,14 +3781,14 @@
                     axisLine: { lineStyle: { color: isDark ? '#3a3a3a' : '#ddd' } },
                     axisTick: { show: false },
                     axisLabel: {
+                        interval: 0,
+                        rotate: 0,
                         color: isDark ? '#887755' : '#888',
-                        fontSize: 11,
+                        fontSize: isMobile ? 10 : 11,
                         fontWeight: 600,
                         fontFamily: '-apple-system,sans-serif',
-                        formatter: function(v, i) {
-                            return '{pill|' + v + '}';
-                        },
-                        rich: {
+                        formatter: isMobile ? undefined : function(v) { return '{pill|' + v + '}'; },
+                        rich: isMobile ? undefined : {
                             pill: {
                                 backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)',
                                 borderRadius: 6,
