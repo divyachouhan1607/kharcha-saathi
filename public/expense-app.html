@@ -4580,14 +4580,9 @@
                 // Get monthly expenses for breakdown
                 const mk = getMonthKey(), me = expenses[mk] || [];
 
-                // Build full category list: spent categories first, then unused ones
+                // Build category list from pie chart data only
                 var allCats = [];
                 data.forEach(function(d, i) { allCats.push({ name: d.name, rawName: sc[i], value: d.value, colorIdx: i }); });
-                categories.forEach(function(cat) {
-                    if (sc.indexOf(cat.name) === -1) {
-                        allCats.push({ name: cat.emoji + ' ' + cat.name, rawName: cat.name, value: 0, colorIdx: allCats.length });
-                    }
-                });
 
                 const showLimit = 6;
                 const hasMore = allCats.length > showLimit;
@@ -4601,19 +4596,17 @@
                     const barPct = maxVal > 0 ? Math.round((d.value / maxVal) * 100) : 0;
                     const color = baseColors[d.colorIdx % baseColors.length];
                     const amt = sym + d.value.toLocaleString('en-IN', {maximumFractionDigits: 0});
-                    const hasSpend = d.value > 0;
-                    const medal = hasSpend && i < 3 ? medals[i] : '';
-                    const isTop = i === 0 && hasSpend;
+                    const medal = i < 3 ? medals[i] : '';
+                    const isTop = i === 0;
                     const topBorder = isTop ? 'border:1.5px solid ' + color + '40;' : 'border:1px solid ' + (isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)') + ';';
                     const topShadow = isTop ? 'box-shadow:0 2px 12px ' + color + '20;' : '';
-                    const zeroOpacity = hasSpend ? '' : 'opacity:0.5;';
-                    const bgTint = hasSpend ? 'background:linear-gradient(90deg,' + color + (isDark ? '12' : '08') + ',' + cardBg + ');' : 'background:' + cardBg + ';';
+                    const bgTint = 'background:linear-gradient(90deg,' + color + (isDark ? '12' : '08') + ',' + cardBg + ');';
 
                     // Get individual expenses for this category
                     const catExpenses = me.filter(function(e){return e.category === catName});
                     const detailId = 'legend-detail-' + i;
 
-                    lh += '<div style="border-radius:12px;overflow:hidden;' + topBorder + topShadow + zeroOpacity + '">';
+                    lh += '<div style="border-radius:12px;overflow:hidden;' + topBorder + topShadow + '">';
 
                     // Main row (clickable)
                     lh += '<div style="display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;transition:all .25s;' + bgTint + '" ' +
