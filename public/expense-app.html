@@ -3851,23 +3851,6 @@
                         },
                         distance: 10
                     },
-                    markPoint: {
-                        data: [
-                            {
-                                type: 'max', name: 'Peak',
-                                label: { formatter: '{peak|Peak}', rich: { peak: { backgroundColor: '#c0392b', color: '#fff', borderRadius: 8, padding: [3,8,2,8], fontSize: 9, fontWeight: 700, fontFamily: '-apple-system,sans-serif' } }, offset: [0, -8] },
-                                symbol: 'pin', symbolSize: 40,
-                                itemStyle: { color: { type: 'radial', x: 0.5, y: 0.3, r: 0.7, colorStops: [{offset:0,color:'#ff6b6b'},{offset:1,color:'#c0392b'}] }, shadowBlur: 10, shadowColor: 'rgba(192,57,43,0.4)' }
-                            },
-                            {
-                                type: 'min', name: 'Best',
-                                label: { formatter: '{best|Best}', rich: { best: { backgroundColor: '#27ae60', color: '#fff', borderRadius: 8, padding: [3,8,2,8], fontSize: 9, fontWeight: 700, fontFamily: '-apple-system,sans-serif' } }, offset: [0, -8] },
-                                symbol: 'pin', symbolSize: 36,
-                                itemStyle: { color: { type: 'radial', x: 0.5, y: 0.3, r: 0.7, colorStops: [{offset:0,color:'#52c980'},{offset:1,color:'#27ae60'}] }, shadowBlur: 8, shadowColor: 'rgba(39,174,96,0.4)' }
-                            }
-                        ],
-                        animationDelay: 800
-                    },
                     animationDelay: function(idx) { return idx * 60; },
                     animationEasing: 'elasticOut'
                 },
