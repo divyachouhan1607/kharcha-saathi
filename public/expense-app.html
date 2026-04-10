@@ -3863,23 +3863,28 @@
                     animationDelay: function(idx) { return idx * 60 + 30; },
                     animationEasing: 'elasticOut'
                 },
-                // Top face (3D cap)
+                // Glow line on top of each bar
                 {
-                    type: 'pictorialBar',
-                    symbolSize: ['100%', 8],
-                    symbolOffset: [0, -4],
-                    symbolPosition: 'end',
-                    z: 3,
+                    type: 'bar',
                     data: mt.map(function(v, i) {
                         var isCurrentMonth = i === curMonthIdx;
                         return {
-                            value: v,
-                            symbol: 'diamond',
+                            value: v > 0 ? v : null,
                             itemStyle: {
-                                color: v > 0 ? (isCurrentMonth ? '#ff8a6a' : '#f0a070') : 'transparent'
+                                color: 'transparent',
+                                borderColor: v > 0 ? (isCurrentMonth ? '#ffaa80' : '#f0a070') : 'transparent',
+                                borderWidth: 2,
+                                borderType: 'solid',
+                                borderRadius: [6, 6, 0, 0],
+                                shadowBlur: v > 0 ? 10 : 0,
+                                shadowColor: isCurrentMonth ? 'rgba(255,170,128,0.5)' : 'rgba(240,160,112,0.3)',
+                                shadowOffsetY: -2
                             }
                         };
                     }),
+                    barWidth: '55%',
+                    barGap: '-100%',
+                    z: 4,
                     label: { show: false },
                     tooltip: { show: false },
                     silent: true,
