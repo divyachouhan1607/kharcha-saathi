@@ -4575,7 +4575,11 @@
                 const detailBg = isDark ? '#161620' : '#FDF6F2';
                 const detailBorder = isDark ? '#2A1A10' : '#f0f0f0';
                 const maxVal = Math.max.apply(null, data.map(function(d){return d.value}));
-                const medals = ['🥇','🥈','🥉'];
+                const rankStyles = [
+                    {bg:'linear-gradient(135deg,#FFD700,#FFA000)',shadow:'0 2px 8px rgba(255,160,0,0.4)',text:'#fff',border:'2px solid #FFE082',shine:true},
+                    {bg:'linear-gradient(135deg,#C0C0C0,#9E9E9E)',shadow:'0 2px 8px rgba(158,158,158,0.4)',text:'#fff',border:'2px solid #E0E0E0',shine:true},
+                    {bg:'linear-gradient(135deg,#CD7F32,#A0522D)',shadow:'0 2px 8px rgba(160,82,45,0.35)',text:'#fff',border:'2px solid #DEB887',shine:true}
+                ];
 
                 // Get monthly expenses for breakdown
                 const mk = getMonthKey(), me = expenses[mk] || [];
@@ -4596,7 +4600,7 @@
                     const barPct = maxVal > 0 ? Math.round((d.value / maxVal) * 100) : 0;
                     const color = baseColors[d.colorIdx % baseColors.length];
                     const amt = sym + d.value.toLocaleString('en-IN', {maximumFractionDigits: 0});
-                    const medal = i < 3 ? medals[i] : '';
+                    const rs = i < 3 ? rankStyles[i] : null;
                     const isTop = i === 0;
                     const topBorder = isTop ? 'border:1.5px solid ' + color + '40;' : 'border:1px solid ' + (isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)') + ';';
                     const topShadow = isTop ? 'box-shadow:0 2px 12px ' + color + '20;' : '';
@@ -4615,7 +4619,14 @@
                         'onmouseleave="this.style.transform=\'none\';this.style.boxShadow=\'' + (isTop ? '0 2px 12px ' + color + '20' : 'none') + '\'">' +
 
                         // Rank badge
-                        '<div style="width:34px;height:34px;border-radius:50%;background:' + color + (isDark ? '22' : '15') + ';display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:' + (medal ? '16px' : '13px') + ';font-weight:700;color:' + (medal ? color : lgPct) + ';">' + (medal || (i+1)) + '</div>' +
+                        (rs ?
+                        '<div style="width:34px;height:34px;border-radius:50%;background:' + rs.bg + ';display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;font-weight:800;color:' + rs.text + ';box-shadow:' + rs.shadow + ';border:' + rs.border + ';position:relative;overflow:hidden;">' +
+                            '<span style="position:relative;z-index:1;text-shadow:0 1px 2px rgba(0,0,0,0.3);">' + (i+1) + '</span>' +
+                            '<div style="position:absolute;top:-50%;left:-50%;width:100%;height:100%;background:linear-gradient(135deg,rgba(255,255,255,0.4),transparent);transform:rotate(-30deg);"></div>' +
+                        '</div>'
+                        :
+                        '<div style="width:34px;height:34px;border-radius:50%;background:' + color + (isDark ? '22' : '12') + ';display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;font-weight:700;color:' + lgPct + ';">' + (i+1) + '</div>'
+                        ) +
 
                         // Name + bar
                         '<div style="flex:1;min-width:0;">' +
