@@ -3727,8 +3727,7 @@
             const el = document.getElementById('yearlyChart');
             if (_yearlyChartInstance) { _yearlyChartInstance.dispose(); _yearlyChartInstance = null; }
 
-            const elW = el.clientWidth || 400;
-            const mn = elW < 500 ? ['J','F','M','A','M','J','J','A','S','O','N','D'] : ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+            const mn = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
             const mt = []; let max = 0;
             for (let m = 1; m <= 12; m++) {
                 const mk = `${analyticsYear}-${String(m).padStart(2, '0')}`;
@@ -3772,7 +3771,7 @@
                     extraCssText: 'border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.2);padding:12px 16px;'
                 },
                 grid: {
-                    left: isMobile ? '4%' : '8%', right: isMobile ? '2%' : '4%', top: '8%', bottom: '12%',
+                    left: isMobile ? '2%' : '8%', right: isMobile ? '1%' : '4%', top: isMobile ? '4%' : '8%', bottom: isMobile ? '8%' : '12%',
                     containLabel: true
                 },
                 xAxis: {
@@ -3784,9 +3783,10 @@
                         interval: 0,
                         rotate: 0,
                         color: isDark ? '#887755' : '#888',
-                        fontSize: isMobile ? 10 : 11,
+                        fontSize: isMobile ? 9 : 11,
                         fontWeight: 600,
                         fontFamily: '-apple-system,sans-serif',
+                        margin: isMobile ? 6 : 12,
                         formatter: isMobile ? undefined : function(v) { return '{pill|' + v + '}'; },
                         rich: isMobile ? undefined : {
                             pill: {
@@ -3818,7 +3818,7 @@
                 {
                     type: 'bar',
                     data: mt.map(function(v) { return v > 0 ? -v * 0.15 : 0; }),
-                    barWidth: isMobile ? '60%' : '55%',
+                    barWidth: isMobile ? '70%' : '55%',
                     barGap: '-100%',
                     z: 0,
                     itemStyle: {
@@ -3876,9 +3876,9 @@
                             }
                         };
                     }),
-                    barWidth: isMobile ? '60%' : '55%',
+                    barWidth: isMobile ? '70%' : '55%',
                     label: {
-                        show: true,
+                        show: !isMobile,
                         position: 'top',
                         formatter: function(p) { return p.value > 0 ? '{bg|' + abbreviateAmount(p.value, sym) + '}' : ''; },
                         rich: {
