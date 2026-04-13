@@ -34,12 +34,14 @@ export function GoogleSignInButton({
       const googleResult = result?.result;
       if (googleResult?.responseType === "online" && googleResult.idToken) {
         // Exchange the Google ID token with Supabase for a session
-        const { error } = await supabase.auth.signInWithIdToken({
+        const { error, data } = await supabase.auth.signInWithIdToken({
           provider: "google",
           token: googleResult.idToken,
         });
 
-        if (!error) {
+        if (!error && data?.session) {
+          // Wait for session cookies to be written before redirecting
+          await new Promise((resolve) => setTimeout(resolve, 200));
           window.location.href = "/dashboard";
         }
       }
