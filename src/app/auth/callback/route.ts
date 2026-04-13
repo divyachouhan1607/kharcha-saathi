@@ -13,14 +13,26 @@ export async function GET(request: NextRequest) {
 
     if (!error && data?.session) {
       if (fromApp) {
-        // Redirect to deep link so the Capacitor WebView can set the session
-        const params = new URLSearchParams({
-          access_token: data.session.access_token,
-          refresh_token: data.session.refresh_token,
+        // Return an HTML page that redirects to the deep link via JavaScript
+        // Chrome Custom Tab blocks server-side 302 redirects to custom schemes
+        // but allows client-side JavaScript navigation
+        const deepLink =
+          `in.kharchasaathi.app://auth/callback` +
+          `?access_token=${encodeURIComponent(data.session.access_token)}` +
+          `&refresh_token=${encodeURIComponent(data.session.refresh_token)}`;
+
+        const html = `<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>Signing in...</title></head>
+<body>
+<p>Signing you in, please wait...</p>
+<script>window.location.href = ${JSON.stringify(deepLink)};</script>
+</body>
+</html>`;
+
+        return new NextResponse(html, {
+          headers: { "Content-Type": "text/html" },
         });
-        return NextResponse.redirect(
-          `in.kharchasaathi.app://auth/callback?${params.toString()}`
-        );
       }
       return NextResponse.redirect(`${origin}${next}`);
     }
