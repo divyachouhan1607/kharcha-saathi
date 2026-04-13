@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 
 function isCapacitor(): boolean {
@@ -13,37 +14,64 @@ export function GoogleSignInButton({
   children: React.ReactNode;
   className?: string;
 }) {
+  useEffect(() => {
+    if (!isCapacitor()) return;
+
+    let cleanup: (() => void) | undefined;
+
+    import("@capacitor/app").then(({ App }) => {
+      const listener = App.addListener("appUrlOpen", async ({ url }) => {
+        if (!url.includes("auth/callback")) return;
+
+        // Close the Chrome Custom Tab
+        const { Browser } = await import("@capacitor/browser");
+        await Browser.close();
+
+        // Extract tokens from the deep link URL
+        const urlObj = new URL(url);
+        const accessToken = urlObj.searchParams.get("access_token");
+        const refreshToken = urlObj.searchParams.get("refresh_token");
+
+        if (accessToken && refreshToken) {
+          // Set the session in the WebView's Supabase client
+          const supabase = createClient();
+          const { error } = await supabase.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken,
+          });
+
+          if (!error) {
+            window.location.href = "/dashboard";
+          }
+        }
+      });
+
+      cleanup = () => {
+        listener.then((l) => l.remove());
+      };
+    });
+
+    return () => {
+      cleanup?.();
+    };
+  }, []);
+
   const handleSignIn = async () => {
     const supabase = createClient();
 
     if (isCapacitor()) {
-      // Native Google Sign-In — shows bottom sheet account picker, no browser
-      const { SocialLogin } = await import("@capgo/capacitor-social-login");
-      await SocialLogin.initialize({
-        google: {
-          webClientId:
-            "70670976387-jegs52h23874eue79q0r0a5oe75t56qt.apps.googleusercontent.com",
+      // Use Chrome Custom Tabs with deep link callback
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback?from=app`,
+          skipBrowserRedirect: true,
         },
       });
 
-      const result = await SocialLogin.login({
-        provider: "google",
-        options: { scopes: ["email", "profile"] },
-      });
-
-      const googleResult = result?.result;
-      if (googleResult?.responseType === "online" && googleResult.idToken) {
-        // Exchange the Google ID token with Supabase for a session
-        const { error, data } = await supabase.auth.signInWithIdToken({
-          provider: "google",
-          token: googleResult.idToken,
-        });
-
-        if (!error && data?.session) {
-          // Wait for session cookies to be written before redirecting
-          await new Promise((resolve) => setTimeout(resolve, 200));
-          window.location.href = "/dashboard";
-        }
+      if (data?.url && !error) {
+        const { Browser } = await import("@capacitor/browser");
+        await Browser.open({ url: data.url });
       }
     } else {
       // Web: use standard OAuth redirect
