@@ -1,10 +1,19 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 
 function isCapacitor(): boolean {
   return typeof window !== "undefined" && "Capacitor" in window;
+}
+
+function getCapacitorPlugin(name: string) {
+  // Access native plugin directly through the Capacitor bridge
+  // This works even when JS is loaded from a remote URL
+  const cap = (window as unknown as Record<string, unknown>).Capacitor as
+    | { Plugins?: Record<string, Record<string, (...args: unknown[]) => Promise<unknown>>> }
+    | undefined;
+  return cap?.Plugins?.[name];
 }
 
 export function GoogleSignInButton({
@@ -14,53 +23,82 @@ export function GoogleSignInButton({
   children: React.ReactNode;
   className?: string;
 }) {
+  const deepLinkSetup = useRef(false);
+
   useEffect(() => {
-    if (!isCapacitor()) return;
+    if (!isCapacitor() || deepLinkSetup.current) return;
+    deepLinkSetup.current = true;
 
-    let cleanup: (() => void) | undefined;
-
+    // Set up deep link listener as fallback for Chrome Custom Tabs flow
     import("@capacitor/app").then(({ App }) => {
-      const listener = App.addListener("appUrlOpen", async ({ url }) => {
+      App.addListener("appUrlOpen", async ({ url }) => {
         if (!url.includes("auth/callback")) return;
 
-        // Close the Chrome Custom Tab
         const { Browser } = await import("@capacitor/browser");
         await Browser.close();
 
-        // Extract tokens from the deep link URL
         const urlObj = new URL(url);
         const accessToken = urlObj.searchParams.get("access_token");
         const refreshToken = urlObj.searchParams.get("refresh_token");
 
         if (accessToken && refreshToken) {
-          // Set the session in the WebView's Supabase client
           const supabase = createClient();
           const { error } = await supabase.auth.setSession({
             access_token: accessToken,
             refresh_token: refreshToken,
           });
-
           if (!error) {
             window.location.href = "/dashboard";
           }
         }
       });
-
-      cleanup = () => {
-        listener.then((l) => l.remove());
-      };
     });
-
-    return () => {
-      cleanup?.();
-    };
   }, []);
 
   const handleSignIn = async () => {
     const supabase = createClient();
 
     if (isCapacitor()) {
-      // Use Chrome Custom Tabs with deep link callback
+      // Try native Google Sign-In first (no browser opens)
+      const plugin = getCapacitorPlugin("SocialLogin");
+
+      if (plugin) {
+        try {
+          await plugin.initialize({
+            google: {
+              webClientId:
+                "70670976387-jegs52h23874eue79q0r0a5oe75t56qt.apps.googleusercontent.com",
+            },
+          });
+
+          const result = (await plugin.login({
+            provider: "google",
+            options: { scopes: ["email", "profile"] },
+          })) as {
+            result?: {
+              responseType?: string;
+              idToken?: string;
+            };
+          };
+
+          if (result?.result?.idToken) {
+            const { error, data } = await supabase.auth.signInWithIdToken({
+              provider: "google",
+              token: result.result.idToken,
+            });
+
+            if (!error && data?.session) {
+              await new Promise((r) => setTimeout(r, 200));
+              window.location.href = "/dashboard";
+              return;
+            }
+          }
+        } catch {
+          // Native sign-in failed, fall through to Chrome Custom Tabs
+        }
+      }
+
+      // Fallback: Chrome Custom Tabs with deep link callback
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
@@ -74,7 +112,7 @@ export function GoogleSignInButton({
         await Browser.open({ url: data.url });
       }
     } else {
-      // Web: use standard OAuth redirect
+      // Web: standard OAuth redirect
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
