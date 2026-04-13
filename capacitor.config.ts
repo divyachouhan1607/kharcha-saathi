@@ -6,12 +6,7 @@ const config: CapacitorConfig = {
   webDir: 'out',
   server: {
     url: 'https://kharcha-saathi.vercel.app',
-    cleartext: false,
-    allowNavigation: [
-      'accounts.google.com',
-      '*.google.com',
-      '*.supabase.co',
-    ]
+    cleartext: false
   }
 };
 

@@ -2,6 +2,10 @@
 
 import { createClient } from "@/lib/supabase/client";
 
+function isCapacitor(): boolean {
+  return typeof window !== "undefined" && "Capacitor" in window;
+}
+
 export function GoogleSignInButton({
   children,
   className,
@@ -19,8 +23,14 @@ export function GoogleSignInButton({
       },
     });
 
-    if (data?.url && !error) {
-      // Navigate in the same window to stay inside the Capacitor WebView
+    if (!data?.url || error) return;
+
+    if (isCapacitor()) {
+      // Use Chrome Custom Tabs via Capacitor Browser plugin
+      // Google blocks OAuth in embedded WebViews (disallowed_useragent)
+      const { Browser } = await import("@capacitor/browser");
+      await Browser.open({ url: data.url, windowName: "_self" });
+    } else {
       window.location.href = data.url;
     }
   };
