@@ -12,10 +12,10 @@ export default function SetSessionPage() {
     if (accessToken && refreshToken) {
       const supabase = createClient();
 
-      // Timeout fallback — if setSession takes too long, try direct navigation
+      // Timeout fallback — if setSession takes too long, force redirect
       const timeout = setTimeout(() => {
         window.location.href = "/dashboard";
-      }, 3000);
+      }, 5000);
 
       supabase.auth
         .setSession({
@@ -23,8 +23,8 @@ export default function SetSessionPage() {
           refresh_token: refreshToken,
         })
         .then(({ error }) => {
-          clearTimeout(timeout);
           if (!error) {
+            clearTimeout(timeout);
             window.location.href = "/dashboard";
           } else {
             // Session might be expired — try refreshing
@@ -35,10 +35,16 @@ export default function SetSessionPage() {
         })
         .then((result) => {
           if (result && !result.error) {
+            clearTimeout(timeout);
+            window.location.href = "/dashboard";
+          } else if (result) {
+            // Both setSession and refreshSession failed — redirect anyway
+            clearTimeout(timeout);
             window.location.href = "/dashboard";
           }
         })
         .catch(() => {
+          clearTimeout(timeout);
           window.location.href = "/dashboard";
         });
     } else {
