@@ -1,4 +1,7 @@
-const CACHE_NAME = "kharcha-saathi-v1";
+// Bumped from v1 — v1 cached /api/user-data responses, which caused stale
+// server reads to overwrite local state when the network flickered. v2 never
+// caches API responses; old caches are purged on activate.
+const CACHE_NAME = "kharcha-saathi-v2";
 const STATIC_ASSETS = [
   "/",
   "/dashboard",
@@ -38,8 +41,12 @@ self.addEventListener("fetch", (event) => {
   // Skip chrome-extension and other non-http requests
   if (!request.url.startsWith("http")) return;
 
-  // Network-first for API calls and navigation
-  if (request.url.includes("/api/") || request.mode === "navigate") {
+  // Never intercept API calls. Let the client see real network state —
+  // including failures — instead of serving zombie cached responses.
+  if (request.url.includes("/api/")) return;
+
+  // Network-first for navigations (HTML pages)
+  if (request.mode === "navigate") {
     event.respondWith(
       fetch(request)
         .then((response) => {

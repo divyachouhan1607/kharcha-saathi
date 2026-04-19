@@ -3795,6 +3795,43 @@
         let _localDirty = false;
         function markDirty() { _localDirty = true; }
 
+        // Merge strategy: union local + server, never overwrite. Entry ids are
+        // Date.now() at creation, so dedupe is safe. Local wins on conflict
+        // because it represents the user's most-recent device state.
+        function _mergeExpensesMap(local, remote) {
+            const out = {};
+            const keys = new Set([...Object.keys(local || {}), ...Object.keys(remote || {})]);
+            keys.forEach(function(mk) {
+                const seen = new Set();
+                const merged = [];
+                const l = (local && local[mk]) || [];
+                const r = (remote && remote[mk]) || [];
+                // Iterate local first so local copy of a duplicate id wins.
+                [].concat(l, r).forEach(function(e) {
+                    if (e && !seen.has(e.id)) { seen.add(e.id); merged.push(e); }
+                });
+                if (merged.length) out[mk] = merged;
+            });
+            return out;
+        }
+        function _mergeBudgetsMap(local, remote) {
+            const out = {};
+            const keys = new Set([...Object.keys(local || {}), ...Object.keys(remote || {})]);
+            keys.forEach(function(mk) {
+                const merged = Object.assign({}, (remote && remote[mk]) || {}, (local && local[mk]) || {});
+                if (Object.keys(merged).length) out[mk] = merged;
+            });
+            return out;
+        }
+        function _mergeCategories(local, remote) {
+            if (!Array.isArray(local) || !local.length) return Array.isArray(remote) ? remote : (local || []);
+            if (!Array.isArray(remote) || !remote.length) return local;
+            const byName = new Map();
+            remote.forEach(function(c) { if (c && c.name) byName.set(c.name, c); });
+            local.forEach(function(c) { if (c && c.name) byName.set(c.name, c); });
+            return Array.from(byName.values());
+        }
+
         function loadData() {
             // Load from localStorage first (fast), then sync from server
             const se = localStorage.getItem('expenses');
@@ -3808,8 +3845,8 @@
             sortCategories();
             if (su) { currentCurrency = su; document.getElementById('currencySelect').value = currentCurrency; }
 
-            // Load from server. Skip overwrite if user already mutated local state
-            // while the fetch was in flight — otherwise we'd wipe a just-added entry.
+            // Merge server data with local (never overwrite). After merge, push
+            // the unioned state back up so the server becomes canonical.
             fetch('/api/user-data')
                 .then(r => r.json())
                 .then(res => {
@@ -3820,14 +3857,32 @@
                             saveData();
                             return;
                         }
-                        if (res.data.expenses) expenses = res.data.expenses;
-                        if (res.data.budgets) budgets = res.data.budgets;
-                        if (res.data.categories) { categories = res.data.categories; sortCategories(); }
-                        if (res.data.currency) {
+                        let changed = false;
+                        if (res.data.expenses) {
+                            expenses = _mergeExpensesMap(expenses, res.data.expenses);
+                            changed = true;
+                        }
+                        if (res.data.budgets) {
+                            budgets = _mergeBudgetsMap(budgets, res.data.budgets);
+                            changed = true;
+                        }
+                        if (res.data.categories) {
+                            categories = _mergeCategories(categories, res.data.categories);
+                            sortCategories();
+                            changed = true;
+                        }
+                        if (res.data.currency && !su) {
                             currentCurrency = res.data.currency;
                             document.getElementById('currencySelect').value = currentCurrency;
                         }
-                        // Re-render with server data
+                        // Persist merged state and push up so server converges.
+                        if (changed) {
+                            localStorage.setItem('expenses', JSON.stringify(expenses));
+                            localStorage.setItem('budgets', JSON.stringify(budgets));
+                            localStorage.setItem('categories', JSON.stringify(categories));
+                            saveData();
+                        }
+                        // Re-render with merged data
                         renderExpenses(); renderBudgets(); renderMonthlyAnalytics();
                         renderCategories(); updateCategoryDropdowns(); renderQuickCategories();
                         updateFilterCategoryDropdown(); renderMiniDashboard();
