@@ -4730,7 +4730,10 @@
             const label = document.getElementById('emojiStepName');
             const name = nameInput.value.trim();
             if (name) {
-                step.style.maxHeight = '500px';
+                // Well above the picker's actual height (8 rows × ~46px ≈ 370px
+                // plus label ≈ 30px). Generous cap prevents the last row from
+                // being clipped on any zoom/font-size combination.
+                step.style.maxHeight = '1000px';
                 step.style.opacity = '1';
                 step.style.pointerEvents = 'auto';
                 if (label) label.textContent = name;
