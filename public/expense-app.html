@@ -2703,9 +2703,9 @@
                     <!-- Step 1: name -->
                     <input type="text" id="newCategoryName" required placeholder="Category name (e.g., Coffee)" oninput="handleCategoryNameInput()" style="width:100%;padding:12px 16px;border:2px solid var(--border-color,#dee2e6);border-radius:12px;font-size:15px;background:var(--input-bg,#fff);color:var(--text-primary,#333);box-sizing:border-box;margin-bottom:10px;">
 
-                    <!-- Step 2: emoji picker — dimmed & disabled until a name is typed -->
-                    <div id="emojiStep" style="opacity:0.35;pointer-events:none;transition:opacity 0.25s ease;">
-                        <div style="font-size:12px;color:var(--text-secondary,#888);font-weight:600;margin-bottom:6px;">Pick an emoji for <span id="emojiStepName">this category</span></div>
+                    <!-- Step 2: emoji picker — slides open once a name is typed -->
+                    <div id="emojiStep" style="max-height:0;opacity:0;overflow:hidden;pointer-events:none;transition:max-height 0.3s ease,opacity 0.2s ease;">
+                        <div style="font-size:12px;color:var(--text-secondary,#888);font-weight:600;margin:4px 0 6px;">Pick an emoji for <span id="emojiStepName">this category</span></div>
                         <div id="emojiPickerGrid" style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px;padding:2px;"></div>
                     </div>
 
@@ -4721,19 +4721,22 @@
             });
         }
 
-        // Unlocks the emoji picker once the user has typed a name, and keeps
-        // the hint text in sync ("Pick an emoji for Coffee").
+        // Reveals the emoji picker once the user has typed a name, and keeps
+        // the hint text in sync ("Pick an emoji for Coffee"). Collapses it
+        // back out of view if the name field is cleared.
         function handleCategoryNameInput() {
             const nameInput = document.getElementById('newCategoryName');
             const step = document.getElementById('emojiStep');
             const label = document.getElementById('emojiStepName');
             const name = nameInput.value.trim();
             if (name) {
+                step.style.maxHeight = '500px';
                 step.style.opacity = '1';
                 step.style.pointerEvents = 'auto';
                 if (label) label.textContent = name;
             } else {
-                step.style.opacity = '0.35';
+                step.style.maxHeight = '0';
+                step.style.opacity = '0';
                 step.style.pointerEvents = 'none';
                 if (label) label.textContent = 'this category';
             }
